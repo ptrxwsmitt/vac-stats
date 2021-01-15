@@ -225,8 +225,16 @@
             var minutes = end.diff(start, 'minutes')
             end = end.add(-minutes, 'minutes');
             var seconds = end.diff(start, 'seconds')
-            end = end.add(-seconds, 'seconds');
-            return years+' years  '+months+' months  '+days+' days  '+hours+' hours  '+minutes+' minutes  '+seconds+' seconds  '
+            //end = end.add(-seconds, 'seconds');
+
+            var text = days+' days  '+hours+' hours  '+minutes+' minutes  '+seconds+' seconds';
+            if(months) {
+                text = months+' months  ' + text
+            }
+            if(years) {
+                text = years+' years  ' + text
+            }
+            return text;
         }
 
         function calcTimeToGoFromNow(goalMoment) {
