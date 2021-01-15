@@ -1,36 +1,88 @@
 <html>
     <head>
-        <title>Vaccination Chart Germany</title>
+        <title>COVID-19 Impfquote Deutschland</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+        <!-- JavaScript Bundle with Popper -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script>
+
         <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.13.0/moment.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+
+        <style>
+            #timeLeftFat {
+                font-size: 2em;
+                font-weight: bold;
+            }
+
+            .timeLeftFatContainer {
+                padding: 2em;
+            }
+        </style>
     </head>
 
     <body>
-    <h1>Vaccination Chart Germany</h1>
+    <div class="container">
+        <h1>COVID-19 Impfquote Deutschland</h1>
 
-    <div>
-        <label>Population in Germany</label>
-        <div id="population"></div>
-        <br/>
-        <label>Sum of vaccinations</label>
-        <div id="sumVac"></div>
-        <br/>
-        <label>Average vaccinations per day</label>
-        <div id="avgVac"></div>
-        <br/>
-        <label>Goal will be reached on</label>
-        <div id="goalDate"></div>
-        <br/>
-        <label>Time left</label>
-        <div id="timeLeft"></div>
-        <br/>
-        <label>Vacs left</label>
-        <div id="vacsLeft"></div>
+        Basierend auf den Daten des RKI: <a href="https://www.rki.de/DE/Content/InfAZ/N/Neuartiges_Coronavirus/Daten/Impfquoten-Tab.html">https://www.rki.de/DE/Content/InfAZ/N/Neuartiges_Coronavirus/Daten/Impfquoten-Tab.html</a>
+
+        <div class="container text-center w-100 timeLeftFatContainer">
+            <div class="timeLeftFatContainer">
+                <label>Verbleibende Zeit bis zur Herdenimmunit&auml;t (70%)</label>
+                <div id="timeLeftFat"></div>
+            </div>
+        </div>
+        <div class="container">
+            <h3>Aktueller Stand (RKI, <span id="updateDate"></span>)</h3>
+            <div class="row">
+                <label class="col-6">Bevoelkerung Deutschlands:</label>
+                <div class="col-6 text-right" id="population"></div>
+            </div>
+            <div class="row">
+                <label class="col-6">Herdenimmunitaet (70%) erreicht bei:</label>
+                <div class="col-6 text-right" id="required"></div>
+            </div>
+            <div class="row">
+                <label class="col-6">Bereits geimpft (letzter Stand RKI)</label>
+                <div class="col-6 text-right" id="sumVac"></div>
+            </div>
+            <div class="row">
+                <label class="col-6">Impfungen pro Tag (7-Tage-Schnitt):</label>
+                <div class="col-6 text-right" id="avgVac"></div>
+            </div>
+            <br/>
+            <h5>Details</h5>
+            <div class="row">
+                <label class="col-6">Mittlere Steigerungsrate der Impfungen (7-Tage-Schnitt):</label>
+                <div class="col-6 text-right" id="avgVacInc7Days"></div>
+            </div>
+            <div class="row">
+                <label class="col-6">Mittlere Steigerungsrate der Impfungen (komplette Zeit):</label>
+                <div class="col-6 text-right" id="avgVacInc"></div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <canvas  id="vacChart"> </canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <h3>Hochrechnung Details</h3>
+            <div class="row">
+                <label class="col-6">Herdenimmunitaet (70%) erreicht am:</label>
+                <div class="col-6 text-right" id="goalDate"></div>
+            </div>
+            <div class="row">
+                <label class="col-6">Verbleibende Impfungen:</label>
+                <div class="col-6 text-right" id="vacsLeft"></div>
+            </div>
+            <div class="row">
+                <label class="col-6">Verbleibende Zeit bis zur Herdenimmunit&auml;t:</label>
+                <div class="col-6 text-right" id="timeLeft"></div>
+            </div>
+        </div>
     </div>
-    <canvas  id="vacChart"> </canvas>
-    <p>
-    Chart Data is taken from RKI: https://www.rki.de/DE/Content/InfAZ/N/Neuartiges_Coronavirus/Daten/Impfquoten-Tab.html
-    </p>
 
     <script type="text/javascript">
         <!--
@@ -40,49 +92,75 @@
 
 
         var rkiDateFormat = 'DD/MM/YYYY'
+        var outputFormat = 'DD MMM YYYY'
         var chartDataRki = [
-            { x:"27/12/2020" ,	y:23672},
-            { x:"28/12/2020" ,	y:19084},
-            { x:"29/12/2020" ,	y:42268},
-            { x:"30/12/2020" ,	y:56795},
-            { x:"31/12/2020" ,	y:37620},
-            { x:"01/01/2021" ,	y:30303},
-            { x:"02/01/2021" ,	y:44459},
-            { x:"03/01/2021" ,	y:24236},
-            { x:"04/01/2021" ,	y:47646},
-            { x:"05/01/2021" ,	y:49571},
-            { x:"06/01/2021" ,	y:54534},
-            { x:"07/01/2021" ,	y:55472},
-            { x:"08/01/2021" ,	y:56237},
-            { x:"09/01/2021" ,	y:53010},
-            { x:"10/01/2021" ,	y:32146},
-            { x:"11/01/2021" ,	y:63265},
-            { x:"12/01/2021" ,	y:74021},
-            { x:"13/01/2021" ,	y:78116}
+            { x:"27/12/2020" ,	y:24008},
+            { x:"28/12/2020" ,	y:19232},
+            { x:"29/12/2020" ,	y:42431},
+            { x:"30/12/2020" ,	y:57070},
+            { x:"31/12/2020" ,	y:37766},
+            { x:"01/01/2021" ,	y:30375},
+            { x:"02/01/2021" ,	y:44549},
+            { x:"03/01/2021" ,	y:24366},
+            { x:"04/01/2021" ,	y:47910},
+            { x:"05/01/2021" ,	y:50099},
+            { x:"06/01/2021" ,	y:55435},
+            { x:"07/01/2021" ,	y:55957},
+            { x:"08/01/2021" ,	y:57150},
+            { x:"09/01/2021" ,	y:53491},
+            { x:"10/01/2021" ,	y:32340},
+            { x:"11/01/2021" ,	y:64370},
+            { x:"12/01/2021" ,	y:78937},
+            { x:"13/01/2021" ,	y:91542},
+            { x:"14/01/2021" ,	y:94654}
         ]
 
-        var population = 83020000
-        var goalPercentage = 70.0
+        var population = 83020000;
+        var goalPercentage = 70.0;
+        var maxVacsPerDay = 250000;
 
         function sumVaccinations() {
             var sum = 0
             chartDataRki.forEach(item => {
-                sum += item.y
+                sum += item.y;
             })
             return sum
         }
 
-        function weeklyAvgVaccinationsPerDay() {
-            let weekDays = Math.min(7,chartDataRki.length);
+        function avgIncreasePerDay(days) {
+            let weekDays = Math.min(days,chartDataRki.length);
+            let lastIndex = chartDataRki.length - 1;
             let sum = 0;
             for( i=0; i < weekDays; i++) {
-                sum += chartDataRki[chartDataRki.length - 1 - i].y;
+                let previousDay = 0;
+                let previousDayIndex = lastIndex-1-i;
+                if( previousDayIndex >= 0) {
+                    previousDay = chartDataRki[previousDayIndex].y;
+                }
+                let currentDay = chartDataRki[lastIndex-i].y;
+                let increase = currentDay-previousDay;
+                sum += increase;
             }
             return sum / weekDays;
         }
 
-        function avgVaccinationsPerDay() {
-            return sumVaccinations() / chartDataRki.length
+        function calcIncChartData() {
+            let avgInc = avgIncreasePerDay(chartDataRki.length);
+            let chartDateInc = [];
+            chartDataRki.forEach((item,index) => {
+                chartDateInc.push({x:item.x, y:(avgInc*(index+1))});
+            })
+            return chartDateInc;
+        }
+
+        function avgVaccinationsPerDay(days) {
+            let weekDays = Math.min(days,chartDataRki.length);
+            let lastIndex = chartDataRki.length - 1;
+            let sum = 0;
+            for( i=0; i < weekDays; i++) {
+                sum += chartDataRki[lastIndex - i].y;
+            }
+            return sum / weekDays;
         }
 
         function remainingVaccinations(goalPercentage) {
@@ -132,17 +210,30 @@
         }
 
 
-        var dailyRate = weeklyAvgVaccinationsPerDay();
+        var dailyRate = avgVaccinationsPerDay(7);
 
         document.getElementById('population').textContent = population;
+        document.getElementById('required').textContent = remainingVaccinations(goalPercentage);
         document.getElementById('sumVac').textContent = sumVaccinations();
-        document.getElementById('avgVac').textContent = weeklyAvgVaccinationsPerDay();
-        document.getElementById('goalDate').textContent = calcGoalMoment(dailyRate, goalPercentage).format(rkiDateFormat);
+        document.getElementById('avgVac').textContent = Math.floor(avgVaccinationsPerDay(7));
+        document.getElementById('avgVacInc7Days').textContent = Math.floor(avgIncreasePerDay(7));
+        document.getElementById('avgVacInc').textContent = Math.floor(avgIncreasePerDay(chartDataRki.length));
+        document.getElementById('goalDate').textContent = calcGoalMoment(dailyRate, goalPercentage).format(outputFormat);
+        document.getElementById('updateDate').textContent = getLastMeassuredMoment().format(outputFormat);
+
+        function tick() {
+            var timeLeft = calcTimeToGoFromNow(dailyRate, goalPercentage);
+            document.getElementById('timeLeft').textContent = timeLeft;
+            document.getElementById('vacsLeft').textContent = calcVacsToGoFromNow(dailyRate, goalPercentage);
+            document.getElementById('timeLeftFat').textContent = timeLeft;
+        }
+
+        tick();
 
         window.setInterval(function(){
-            document.getElementById('timeLeft').textContent = calcTimeToGoFromNow(dailyRate, goalPercentage);
-            document.getElementById('vacsLeft').textContent = calcVacsToGoFromNow(dailyRate, goalPercentage);
+            tick();
         }, 1000);
+
 
         var chart = new Chart(ctx, {
             // The type of chart we want to create
@@ -150,12 +241,21 @@
 
             // The data for our dataset
             data: {
-                datasets: [{
-                    label: 'RKI Vaccination Numbers per Day',
-                    backgroundColor: 'rgb(212,231,205)',
-                    borderColor: 'rgb(91,183,29)',
-                    data: chartDataRki
-                }]
+                datasets: [
+                    {
+                        label: 'Mittlere Steigerungsrate (komplette Zeit)',
+                        backgroundColor: 'rgb(157,181,203)',
+                        borderColor: 'rgb(6,100,215)',
+                        fill: false,
+                        data: calcIncChartData()
+                    },
+                    {
+                        label: 'Impfungen pro Tag',
+                        backgroundColor: 'rgb(212,231,205)',
+                        borderColor: 'rgb(91,183,29)',
+                        data: chartDataRki
+                    }
+                ]
             },
 
             // Configuration options go here
@@ -169,13 +269,13 @@
                         },
                         scaleLabel: {
                             display: true,
-                            labelString: 'date'
+                            labelString: 'Datum'
                         }
                     }],
                     yAxes: [{
                         scaleLabel: {
                             display: true,
-                            labelString: 'vaccinations per day'
+                            labelString: 'Impfungen pro Tag'
                         }
                     }]
                 }
