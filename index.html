@@ -1,0 +1,187 @@
+<html>
+    <head>
+        <title>Vaccination Chart Germany</title>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.13.0/moment.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+    </head>
+
+    <body>
+    <h1>Vaccination Chart Germany</h1>
+
+    <div>
+        <label>Population in Germany</label>
+        <div id="population"></div>
+        <br/>
+        <label>Sum of vaccinations</label>
+        <div id="sumVac"></div>
+        <br/>
+        <label>Average vaccinations per day</label>
+        <div id="avgVac"></div>
+        <br/>
+        <label>Goal will be reached on</label>
+        <div id="goalDate"></div>
+        <br/>
+        <label>Time left</label>
+        <div id="timeLeft"></div>
+        <br/>
+        <label>Vacs left</label>
+        <div id="vacsLeft"></div>
+    </div>
+    <canvas  id="vacChart"> </canvas>
+    <p>
+    Chart Data is taken from RKI: https://www.rki.de/DE/Content/InfAZ/N/Neuartiges_Coronavirus/Daten/Impfquoten-Tab.html
+    </p>
+
+    <script type="text/javascript">
+        <!--
+        var ctx = document.getElementById('vacChart').getContext('2d');
+
+        // https://www.rki.de/DE/Content/InfAZ/N/Neuartiges_Coronavirus/Daten/Impfquoten-Tab.html
+
+
+        var rkiDateFormat = 'DD/MM/YYYY'
+        var chartDataRki = [
+            { x:"27/12/2020" ,	y:23672},
+            { x:"28/12/2020" ,	y:19084},
+            { x:"29/12/2020" ,	y:42268},
+            { x:"30/12/2020" ,	y:56795},
+            { x:"31/12/2020" ,	y:37620},
+            { x:"01/01/2021" ,	y:30303},
+            { x:"02/01/2021" ,	y:44459},
+            { x:"03/01/2021" ,	y:24236},
+            { x:"04/01/2021" ,	y:47646},
+            { x:"05/01/2021" ,	y:49571},
+            { x:"06/01/2021" ,	y:54534},
+            { x:"07/01/2021" ,	y:55472},
+            { x:"08/01/2021" ,	y:56237},
+            { x:"09/01/2021" ,	y:53010},
+            { x:"10/01/2021" ,	y:32146},
+            { x:"11/01/2021" ,	y:63265},
+            { x:"12/01/2021" ,	y:74021},
+            { x:"13/01/2021" ,	y:78116}
+        ]
+
+        var population = 83020000
+        var goalPercentage = 70.0
+
+        function sumVaccinations() {
+            var sum = 0
+            chartDataRki.forEach(item => {
+                sum += item.y
+            })
+            return sum
+        }
+
+        function weeklyAvgVaccinationsPerDay() {
+            let weekDays = Math.min(7,chartDataRki.length);
+            let sum = 0;
+            for( i=0; i < weekDays; i++) {
+                sum += chartDataRki[chartDataRki.length - 1 - i].y;
+            }
+            return sum / weekDays;
+        }
+
+        function avgVaccinationsPerDay() {
+            return sumVaccinations() / chartDataRki.length
+        }
+
+        function remainingVaccinations(goalPercentage) {
+            return (population * goalPercentage/100) - sumVaccinations();
+        }
+
+        function daysTillGoal(dailyRate, goalPercentage) {
+            return remainingVaccinations(goalPercentage) / dailyRate;
+        }
+
+        function getLastMeassuredMoment() {
+            return moment(chartDataRki[chartDataRki.length-1].x, rkiDateFormat).add(1, 'd').startOf('day')
+        }
+
+        function calcVacsToGoFromNow(dailyRate, goalPercentage) {
+            var start = getLastMeassuredMoment()
+            var now = moment()
+            var secondRate = avgVaccinationsPerSecond(dailyRate)
+            return Math.floor(remainingVaccinations(goalPercentage) - (now.diff(start, 'seconds') * secondRate))
+        }
+
+        function calcTimeToGoFromNow(dailyRate, goalPercentage) {
+            var now = moment()
+            var end = calcGoalMoment(dailyRate, goalPercentage)
+            var years = end.diff(now, 'years')
+            end = end.add(-years, 'years');
+            var months = end.diff(now, 'months')
+            end = end.add(-months, 'months');
+            var days = end.diff(now, 'days')
+            end = end.add(-days, 'days');
+            var hours = end.diff(now, 'hours')
+            end = end.add(-hours, 'hours');
+            var minutes = end.diff(now, 'minutes')
+            end = end.add(-minutes, 'minutes');
+            var seconds = end.diff(now, 'seconds')
+            end = end.add(-seconds, 'seconds');
+            return years+' years  '+months+' months  '+days+' days  '+hours+' hours  '+minutes+' minutes  '+seconds+' seconds  '
+        }
+
+        function calcGoalMoment(dailyRate, goalPercentage) {
+            var days = daysTillGoal(dailyRate, goalPercentage)
+            return moment().startOf('day').add(days, 'd')
+        }
+
+        function avgVaccinationsPerSecond(dailyRate) {
+            return dailyRate / (24 * 60 * 60)
+        }
+
+
+        var dailyRate = weeklyAvgVaccinationsPerDay();
+
+        document.getElementById('population').textContent = population;
+        document.getElementById('sumVac').textContent = sumVaccinations();
+        document.getElementById('avgVac').textContent = weeklyAvgVaccinationsPerDay();
+        document.getElementById('goalDate').textContent = calcGoalMoment(dailyRate, goalPercentage).format(rkiDateFormat);
+
+        window.setInterval(function(){
+            document.getElementById('timeLeft').textContent = calcTimeToGoFromNow(dailyRate, goalPercentage);
+            document.getElementById('vacsLeft').textContent = calcVacsToGoFromNow(dailyRate, goalPercentage);
+        }, 1000);
+
+        var chart = new Chart(ctx, {
+            // The type of chart we want to create
+            type: 'line',
+
+            // The data for our dataset
+            data: {
+                datasets: [{
+                    label: 'RKI Vaccination Numbers per Day',
+                    backgroundColor: 'rgb(212,231,205)',
+                    borderColor: 'rgb(91,183,29)',
+                    data: chartDataRki
+                }]
+            },
+
+            // Configuration options go here
+            options: {
+                scales: {
+                    xAxes: [{
+                        type: 'time',
+                        time: {
+                            parser: rkiDateFormat,
+                            unit: 'day'
+                        },
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'date'
+                        }
+                    }],
+                    yAxes: [{
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'vaccinations per day'
+                        }
+                    }]
+                }
+            }
+        });
+        //-->
+    </script>
+    </body>
+</html>
