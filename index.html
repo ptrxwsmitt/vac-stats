@@ -1,6 +1,6 @@
 <html>
     <head>
-        <title>COVID-19 Impfquote Deutschland</title>
+        <title>Hochrechnung COVID-19 Impfquote Deutschland</title>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
         <!-- JavaScript Bundle with Popper -->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script>
@@ -28,59 +28,78 @@
 
         <div class="container text-center w-100 timeLeftFatContainer">
             <div class="timeLeftFatContainer">
-                <label>Verbleibende Zeit bis zur Herdenimmunit&auml;t (70%)</label>
+                <label>Geschaetzte verbleibende Zeit bis zur Herdenimmunit&auml;t (70%) bei linear steigender Impfquote</label>
                 <div id="timeLeftFat"></div>
             </div>
         </div>
+
+        <div class="row">
+            <div class="col-12">
+                <canvas  id="vacChart"> </canvas>
+            </div>
+        </div>
+
         <div class="container">
             <h3>Aktueller Stand (RKI, <span id="updateDate"></span>)</h3>
-            <div class="row">
-                <label class="col-6">Bevoelkerung Deutschlands:</label>
-                <div class="col-6 text-right" id="population"></div>
-            </div>
-            <div class="row">
-                <label class="col-6">Herdenimmunitaet (70%) erreicht bei:</label>
-                <div class="col-6 text-right" id="required"></div>
-            </div>
-            <div class="row">
-                <label class="col-6">Bereits geimpft (letzter Stand RKI)</label>
-                <div class="col-6 text-right" id="sumVac"></div>
-            </div>
-            <div class="row">
-                <label class="col-6">Impfungen pro Tag (7-Tage-Schnitt):</label>
-                <div class="col-6 text-right" id="avgVac"></div>
-            </div>
-            <br/>
-            <h5>Details</h5>
-            <div class="row">
-                <label class="col-6">Mittlere Steigerungsrate der Impfungen (7-Tage-Schnitt):</label>
-                <div class="col-6 text-right" id="avgVacInc7Days"></div>
-            </div>
-            <div class="row">
-                <label class="col-6">Mittlere Steigerungsrate der Impfungen (komplette Zeit):</label>
-                <div class="col-6 text-right" id="avgVacInc"></div>
-            </div>
-            <div class="row">
-                <div class="col-12">
-                    <canvas  id="vacChart"> </canvas>
+            <div class="container p-2">
+                <div class="row">
+                    <label class="col-6">Bevoelkerung Deutschlands:</label>
+                    <div class="col-6 text-right" id="population"></div>
+                </div>
+                <div class="row">
+                    <label class="col-6">Herdenimmunitaet (70% x 2 Dosen) erreicht bei:</label>
+                    <div class="col-6 text-right" id="required"></div>
+                </div>
+                <div class="row">
+                    <label class="col-6">Bereits geimpft:</label>
+                    <div class="col-6 text-right" id="sumVac"></div>
+                </div>
+                <div class="row">
+                    <label class="col-6">Impfquote (7-Tage-Schnitt):</label>
+                    <div class="col-6 text-right" id="avgVac"></div>
+                </div>
+                <div class="row">
+                    <label class="col-6">Mittlere Steigerungsrate der Impfungen (7-Tage-Schnitt):</label>
+                    <div class="col-6 text-right" id="avgVacInc7Days"></div>
+                </div>
+                <div class="row">
+                    <label class="col-6">Mittlere Steigerungsrate der Impfungen (komplette Zeit):</label>
+                    <div class="col-6 text-right" id="avgVacInc"></div>
                 </div>
             </div>
         </div>
 
         <div class="container">
-            <h3>Hochrechnung Details</h3>
-            <div class="row">
-                <label class="col-6">Herdenimmunitaet (70%) erreicht am:</label>
-                <div class="col-6 text-right" id="goalDate"></div>
+            <h3>Hochrechnung</h3>
+
+            <div class="container p-2">
+                <h5>Konstante Impfquote (7-Tage Wert)</h5>
+                <div class="row">
+                    <label class="col-6">Herdenimmunitaet (70%) erreicht am:</label>
+                    <div class="col-6 text-right" id="goalDate"></div>
+                </div>
+                <div class="row">
+                    <label class="col-6">Verbleibende Zeit bis zur Herdenimmunit&auml;t:</label>
+                    <div class="col-6 text-right" id="timeLeft"></div>
+                </div>
             </div>
-            <div class="row">
-                <label class="col-6">Verbleibende Impfungen:</label>
-                <div class="col-6 text-right" id="vacsLeft"></div>
+
+            <div class="container p-2">
+                <h5>Linear ansteigende Impfquote (7-Tage Wert)</h5>
+                <div class="row">
+                    <label class="col-6">Maximale Anzahl an Impfungen pro Tag:</label>
+                    <div class="col-6 text-right" id="maxVac"></div>
+                </div>
+                <div class="row">
+                    <label class="col-6">Herdenimmunitaet (70%) erreicht am:</label>
+                    <div class="col-6 text-right" id="goalDateInc"></div>
+                </div>
+                <div class="row">
+                    <label class="col-6">Verbleibende Zeit bis zur Herdenimmunit&auml;t:</label>
+                    <div class="col-6 text-right" id="timeLeftInc"></div>
+                </div>
             </div>
-            <div class="row">
-                <label class="col-6">Verbleibende Zeit bis zur Herdenimmunit&auml;t:</label>
-                <div class="col-6 text-right" id="timeLeft"></div>
-            </div>
+
         </div>
     </div>
 
@@ -113,11 +132,13 @@
             { x:"12/01/2021" ,	y:78937},
             { x:"13/01/2021" ,	y:91542},
             { x:"14/01/2021" ,	y:94654}
-        ]
+        ];
+
+        var chartIncEstimation = [];
 
         var population = 83020000;
-        var goalPercentage = 70.0;
-        var maxVacsPerDay = 250000;
+        var goalPercentage = 70.0 * 2.0;
+        var maxVacsPerDay = 200000;
 
         function sumVaccinations() {
             var sum = 0
@@ -163,41 +184,48 @@
             return sum / weekDays;
         }
 
-        function remainingVaccinations(goalPercentage) {
-            return (population * goalPercentage/100) - sumVaccinations();
+        function avgVaccinationsPerSecond(dailyRate) {
+            return dailyRate / (24 * 60 * 60)
         }
 
-        function daysTillGoal(dailyRate, goalPercentage) {
-            return remainingVaccinations(goalPercentage) / dailyRate;
+        function remainingVaccinations(goalPercentage) {
+            return (population * goalPercentage/100) - sumVaccinations();
         }
 
         function getLastMeassuredMoment() {
             return moment(chartDataRki[chartDataRki.length-1].x, rkiDateFormat).add(1, 'd').startOf('day')
         }
 
-        function calcVacsToGoFromNow(dailyRate, goalPercentage) {
-            var start = getLastMeassuredMoment()
-            var now = moment()
-            var secondRate = avgVaccinationsPerSecond(dailyRate)
-            return Math.floor(remainingVaccinations(goalPercentage) - (now.diff(start, 'seconds') * secondRate))
+        function getLastMeassuredValue() {
+            return chartDataRki[chartDataRki.length-1].y
         }
 
-        function calcTimeToGoFromNow(dailyRate, goalPercentage) {
-            var now = moment()
-            var end = calcGoalMoment(dailyRate, goalPercentage)
-            var years = end.diff(now, 'years')
+        function readableDiff(start, end){
+            var years = end.diff(start, 'years')
             end = end.add(-years, 'years');
-            var months = end.diff(now, 'months')
+            var months = end.diff(start, 'months')
             end = end.add(-months, 'months');
-            var days = end.diff(now, 'days')
+            var days = end.diff(start, 'days')
             end = end.add(-days, 'days');
-            var hours = end.diff(now, 'hours')
+            var hours = end.diff(start, 'hours')
             end = end.add(-hours, 'hours');
-            var minutes = end.diff(now, 'minutes')
+            var minutes = end.diff(start, 'minutes')
             end = end.add(-minutes, 'minutes');
-            var seconds = end.diff(now, 'seconds')
+            var seconds = end.diff(start, 'seconds')
             end = end.add(-seconds, 'seconds');
             return years+' years  '+months+' months  '+days+' days  '+hours+' hours  '+minutes+' minutes  '+seconds+' seconds  '
+        }
+
+        function calcTimeToGoFromNow(goalMoment) {
+            var now = moment();
+            var end = goalMoment.clone();
+            return readableDiff(now, end);
+        }
+
+        // constant rate
+
+        function daysTillGoal(dailyRate, goalPercentage) {
+            return remainingVaccinations(goalPercentage) / dailyRate;
         }
 
         function calcGoalMoment(dailyRate, goalPercentage) {
@@ -205,27 +233,64 @@
             return moment().startOf('day').add(days, 'd')
         }
 
-        function avgVaccinationsPerSecond(dailyRate) {
-            return dailyRate / (24 * 60 * 60)
+
+        // linear rate
+
+        function daysTillGoalInc(dailyRate, dailyInc, goalPercentage) {
+            var now = getLastMeassuredMoment().add(-1, 'd').startOf('day');
+            var days = 0;
+            var startingValue = getLastMeassuredValue();
+            var sum = startingValue;
+            var max = (population * goalPercentage/100.0);
+            while(sum < max) {
+                var rate = Math.min(startingValue + (days*dailyInc), maxVacsPerDay);
+                sum += rate;
+                if(days < 100) {
+                    chartIncEstimation.push({x: now.format(rkiDateFormat), y: rate})
+                }
+                now.add(1, 'd');
+                days++;
+            }
+            return days;
+        }
+
+        function calcGoalMomentInc(dailyRate, dailyInc, goalPercentage) {
+            var days = daysTillGoalInc(dailyRate, dailyInc, goalPercentage)
+            return moment().startOf('day').add(days, 'd')
         }
 
 
-        var dailyRate = avgVaccinationsPerDay(7);
 
+        // facts
         document.getElementById('population').textContent = population;
         document.getElementById('required').textContent = remainingVaccinations(goalPercentage);
         document.getElementById('sumVac').textContent = sumVaccinations();
         document.getElementById('avgVac').textContent = Math.floor(avgVaccinationsPerDay(7));
         document.getElementById('avgVacInc7Days').textContent = Math.floor(avgIncreasePerDay(7));
         document.getElementById('avgVacInc').textContent = Math.floor(avgIncreasePerDay(chartDataRki.length));
-        document.getElementById('goalDate').textContent = calcGoalMoment(dailyRate, goalPercentage).format(outputFormat);
         document.getElementById('updateDate').textContent = getLastMeassuredMoment().format(outputFormat);
 
+        // estimated
+        var dailyRate = avgVaccinationsPerDay(7);
+        var dailyInc = avgIncreasePerDay(7);
+
+        let goalMoment=calcGoalMoment(dailyRate, goalPercentage);
+        document.getElementById('goalDate').textContent = goalMoment.format(outputFormat);
+
+        let goalMomentInc=calcGoalMomentInc(dailyRate, dailyInc, goalPercentage);
+        document.getElementById('goalDateInc').textContent = goalMomentInc.format(outputFormat);
+
+        document.getElementById('maxVac').textContent = maxVacsPerDay;
+
         function tick() {
-            var timeLeft = calcTimeToGoFromNow(dailyRate, goalPercentage);
+            var timeLeft = calcTimeToGoFromNow(goalMoment);
             document.getElementById('timeLeft').textContent = timeLeft;
-            document.getElementById('vacsLeft').textContent = calcVacsToGoFromNow(dailyRate, goalPercentage);
-            document.getElementById('timeLeftFat').textContent = timeLeft;
+
+            var timeLeftInc = calcTimeToGoFromNow(goalMomentInc);
+            document.getElementById('timeLeftInc').textContent = timeLeftInc;
+
+
+            document.getElementById('timeLeftFat').textContent = timeLeftInc;
         }
 
         tick();
@@ -248,6 +313,13 @@
                         borderColor: 'rgb(6,100,215)',
                         fill: false,
                         data: calcIncChartData()
+                    },
+                    {
+                        label: 'Hochrechnung: linear',
+                        backgroundColor: 'rgb(233,213,233)',
+                        borderColor: 'rgb(176,87,226)',
+                        fill: true,
+                        data: chartIncEstimation
                     },
                     {
                         label: 'Impfungen pro Tag',
