@@ -165,7 +165,7 @@
             return sum
         }
 
-        function avgIncreasePerDay(days) {
+        function areaBelowGraph(days) {
             let dayRange = Math.min(days,chartDataRki.length);
             let sum = 0;
             for( i=0; i < dayRange; i++) {
@@ -178,14 +178,21 @@
                 let currentDayIndex = chartDataRki.length-1-i;
                 let currentDay = chartDataRki[currentDayIndex].y;
 
-                let increase = currentDay-previousDay;
-                sum += increase;
+                let area = currentDay + ((currentDay-previousDay) /2.0);
+                sum += area;
             }
-            return sum / (dayRange-1);
+            return sum;
         }
 
-        function calcLinearChartData() {
-            let avgInc = avgIncreasePerDay(chartDataRki.length);
+        function avgAreaIncreasePerDay(days) {
+            let area = areaBelowGraph(days);
+            let lastDayValue = (area * 2.0) / chartDataRki.length;
+            return lastDayValue / chartDataRki.length;
+        }
+
+        function calcLinearChartDataByArea() {
+            let avgInc = avgAreaIncreasePerDay(chartDataRki.length);
+
             let chartDateInc = [];
             chartDataRki.forEach((item,index) => {
                 chartDateInc.push({x:item.x, y:(avgInc*(index))});
@@ -266,7 +273,7 @@
         function daysTillGoalLinear(dailyRate, dailyInc, goalPercentage) {
             var now = getLastMeassuredMoment().add(-1,'d').startOf('day');
             var days = 0;
-            var startingValue = getLastMeassuredValue();
+            var startingValue = (chartDataRki.length-1) * dailyInc;
             var sum = startingValue;
             var max = (population * goalPercentage/100.0);
             while(sum < max) {
@@ -286,19 +293,18 @@
             return moment().startOf('day').add(days, 'd')
         }
 
-
         // facts
         document.getElementById('population').textContent = population;
         document.getElementById('required').textContent = remainingVaccinations(goalPercentage);
         document.getElementById('sumVac').textContent = sumVaccinations();
         document.getElementById('avgVac').textContent = Math.floor(avgVaccinationsPerDay(7));
-        document.getElementById('avgVacInc7Days').textContent = Math.floor(avgIncreasePerDay(7));
-        document.getElementById('avgVacInc').textContent = Math.floor(avgIncreasePerDay(chartDataRki.length));
+        document.getElementById('avgVacInc7Days').textContent = Math.floor(avgAreaIncreasePerDay(7));
+        document.getElementById('avgVacInc').textContent = Math.floor(avgAreaIncreasePerDay(chartDataRki.length));
         document.getElementById('updateDate').textContent = getLastMeassuredMoment().format(outputFormat);
 
         // estimated
         var dailyRate = avgVaccinationsPerDay(7);
-        var dailyInc = avgIncreasePerDay(chartDataRki.length);
+        var dailyInc = avgAreaIncreasePerDay(chartDataRki.length);
 
         let goalMoment=calcGoalMoment(dailyRate, goalPercentage);
         document.getElementById('goalDate').textContent = goalMoment.format(outputFormat);
@@ -338,7 +344,13 @@
                         backgroundColor: 'rgba(157,181,203)',
                         borderColor: 'rgba(6,100,215)',
                         fill: false,
-                        data: calcLinearChartData()
+                        data: calcLinearChartDataByArea()
+                    },
+                    {
+                        label: 'Impfungen pro Tag (Stand RKI)',
+                        backgroundColor: 'rgb(212,231,205)',
+                        borderColor: 'rgb(91,183,29)',
+                        data: chartDataRki
                     },
                     {
                         label: 'Hochrechnung: linear',
@@ -346,12 +358,6 @@
                         borderColor: 'rgb(176,87,226)',
                         fill: true,
                         data: chartIncEstimation
-                    },
-                    {
-                        label: 'Impfungen pro Tag (Stand RKI)',
-                        backgroundColor: 'rgb(212,231,205)',
-                        borderColor: 'rgb(91,183,29)',
-                        data: chartDataRki
                     }
                 ]
             },
