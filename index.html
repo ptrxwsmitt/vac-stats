@@ -126,6 +126,7 @@
         var rkiDateFormat = 'DD/MM/YYYY'
         var outputFormat = 'DD MMM YYYY'
         var chartDataRki = [
+            { x:"26/12/2020" ,	y:0},
             { x:"27/12/2020" ,	y:24080},
             { x:"28/12/2020" ,	y:19501},
             { x:"29/12/2020" ,	y:42692},
@@ -165,27 +166,29 @@
         }
 
         function avgIncreasePerDay(days) {
-            let weekDays = Math.min(days,chartDataRki.length);
-            let lastIndex = chartDataRki.length - 1;
+            let dayRange = Math.min(days,chartDataRki.length);
             let sum = 0;
-            for( i=0; i < weekDays; i++) {
+            for( i=0; i < dayRange; i++) {
+                let previousDayIndex = chartDataRki.length-2-i;
                 let previousDay = 0;
-                let previousDayIndex = lastIndex-1-i;
                 if( previousDayIndex >= 0) {
                     previousDay = chartDataRki[previousDayIndex].y;
                 }
-                let currentDay = chartDataRki[lastIndex-i].y;
+
+                let currentDayIndex = chartDataRki.length-1-i;
+                let currentDay = chartDataRki[currentDayIndex].y;
+
                 let increase = currentDay-previousDay;
                 sum += increase;
             }
-            return sum / weekDays;
+            return sum / (dayRange-1);
         }
 
-        function calcIncChartData() {
+        function calcLinearChartData() {
             let avgInc = avgIncreasePerDay(chartDataRki.length);
             let chartDateInc = [];
             chartDataRki.forEach((item,index) => {
-                chartDateInc.push({x:item.x, y:(avgInc*(index+1))});
+                chartDateInc.push({x:item.x, y:(avgInc*(index))});
             })
             return chartDateInc;
         }
@@ -260,8 +263,8 @@
 
         // linear rate
 
-        function daysTillGoalInc(dailyRate, dailyInc, goalPercentage) {
-            var now = getLastMeassuredMoment().add(-1, 'd').startOf('day');
+        function daysTillGoalLinear(dailyRate, dailyInc, goalPercentage) {
+            var now = getLastMeassuredMoment().add(-1,'d').startOf('day');
             var days = 0;
             var startingValue = getLastMeassuredValue();
             var sum = startingValue;
@@ -278,8 +281,8 @@
             return days;
         }
 
-        function calcGoalMomentInc(dailyRate, dailyInc, goalPercentage) {
-            var days = daysTillGoalInc(dailyRate, dailyInc, goalPercentage)
+        function calcGoalMomentLinear(dailyRate, dailyInc, goalPercentage) {
+            var days = daysTillGoalLinear(dailyRate, dailyInc, goalPercentage)
             return moment().startOf('day').add(days, 'd')
         }
 
@@ -300,7 +303,7 @@
         let goalMoment=calcGoalMoment(dailyRate, goalPercentage);
         document.getElementById('goalDate').textContent = goalMoment.format(outputFormat);
 
-        let goalMomentInc=calcGoalMomentInc(dailyRate, dailyInc, goalPercentage);
+        let goalMomentInc=calcGoalMomentLinear(dailyRate, dailyInc, goalPercentage);
         document.getElementById('goalDateInc').textContent = goalMomentInc.format(outputFormat);
 
         document.getElementById('maxVac').textContent = maxVacsPerDay;
@@ -335,7 +338,7 @@
                         backgroundColor: 'rgba(157,181,203)',
                         borderColor: 'rgba(6,100,215)',
                         fill: false,
-                        data: calcIncChartData()
+                        data: calcLinearChartData()
                     },
                     {
                         label: 'Hochrechnung: linear',
