@@ -386,8 +386,8 @@
 
         };
         //unable to load file directly into webapp because of CORS: https://impfdashboard.de/static/data/germany_vaccinations_timeseries_v2.tsv
-        //xhttp.open("GET", "./germany_vaccinations_timeseries_v2.tsv", true);
-        xhttp.open("GET", "https://impfdashboard.de/static/data/germany_vaccinations_timeseries_v2.tsv", true);
+        xhttp.open("GET", "./germany_vaccinations_timeseries_v2.tsv", true);
+        //xhttp.open("GET", "https://impfdashboard.de/static/data/germany_vaccinations_timeseries_v2.tsv", true);
         xhttp.send();
         //-->
     </script>
