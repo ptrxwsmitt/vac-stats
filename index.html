@@ -95,7 +95,7 @@
             <div class="container p-2">
                 <h5>Linear ansteigende Impfquote (Mittelwert &uuml;ber alle Daten)</h5>
                 <div class="row">
-                    <label class="col-6">Maximale Impfkapazitaet pro Tag (ca 460 Impfzentren):</label>
+                    <label class="col-6">Gesch&auml;tzte maximale Impfkapazitaet pro Tag (bei ca 460 Impfzentren):</label>
                     <div class="col-6 text-right" id="maxVac"></div>
                 </div>
                 <div class="row">
@@ -142,8 +142,8 @@
 
         function sumVaccinations() {
             let sum = 0;
-            for(let item in chartDataRki) {
-                sum += item.y;
+            for(let index = 0; index < chartDataRki.length; index++) {
+                sum += chartDataRki[index].y;
             }
             return sum;
         }
@@ -374,7 +374,7 @@
         //read data from tsv
         var xhttp = new XMLHttpRequest();
         xhttp.onreadystatechange = function() {
-            if (xhttp.readyState == 4 && xhttp.status == 200) {
+            if (xhttp.readyState === 4 && xhttp.status === 200) {
                 let lines = xhttp.responseText.trim().split('\n');
                 for(let lineIndex=1; lineIndex< lines.length; lineIndex++) {
                     let line = lines[lineIndex];
