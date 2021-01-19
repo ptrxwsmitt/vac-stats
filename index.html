@@ -123,52 +123,29 @@
         // https://www.rki.de/DE/Content/InfAZ/N/Neuartiges_Coronavirus/Daten/Impfquoten-Tab.html
 
 
-        var rkiDateFormat = 'DD/MM/YYYY'
-        var outputFormat = 'DD MMM YYYY'
-        var chartDataRki = [
-            { x:"26/12/2020" ,	y:0},
-            { x:"27/12/2020" ,	y:24080},
-            { x:"28/12/2020" ,	y:19501},
-            { x:"29/12/2020" ,	y:42692},
-            { x:"30/12/2020" ,	y:57228},
-            { x:"31/12/2020" ,	y:37830},
-            { x:"01/01/2021" ,	y:30531},
-            { x:"02/01/2021" ,	y:44740},
-            { x:"03/01/2021" ,	y:24518},
-            { x:"04/01/2021" ,	y:48316},
-            { x:"05/01/2021" ,	y:50520},
-            { x:"06/01/2021" ,	y:55682},
-            { x:"07/01/2021" ,	y:56633},
-            { x:"08/01/2021" ,	y:57329},
-            { x:"09/01/2021" ,	y:53433},
-            { x:"10/01/2021" ,	y:32233},
-            { x:"11/01/2021" ,	y:65457},
-            { x:"12/01/2021" ,	y:79417},
-            { x:"13/01/2021" ,	y:92944},
-            { x:"14/01/2021" ,	y:97788},
-            { x:"15/01/2021" ,  y:85175+55},
-            { x:"16/01/2021" ,  y:52098+62},
-            { x:"17/01/2021" ,  y:31152+6464}
-        ];
+        let rkiDateFormat = 'YYYY-MM-DD';
+        let outputFormat = 'DD MMM YYYY';
+        let chartDataRki = [];
 
-        var chartIncEstimation = [];
+        let chartIncEstimation = [];
 
-        var population = 83020000;
-        var goalPercentage = 70.0 * 2.0;
-        var maxVacsPerDay = 460000;
+        let population = 83020000;
+        let goalPercentage = 70.0 * 2.0;
+        let maxVacsPerDay = 460000;
+        let chart = null;
 
         function sumVaccinations() {
-            var sum = 0
-            chartDataRki.forEach(item => {
+            let sum = 0;
+            for(let item in chartDataRki) {
                 sum += item.y;
-            })
-            return sum
+            }
+            return sum;
         }
 
         function areaBelowGraph(days) {
             let dayRange = Math.min(days,chartDataRki.length);
             let sum = 0;
-            for( i=0; i < dayRange; i++) {
+            for( i = 0; i < dayRange; i++) {
                 let previousDayIndex = chartDataRki.length-2-i;
                 let previousDay = 0;
                 if( previousDayIndex >= 0) {
@@ -194,9 +171,9 @@
             let avgInc = avgAreaIncreasePerDay(chartDataRki.length);
 
             let chartDateInc = [];
-            chartDataRki.forEach((item,index) => {
-                chartDateInc.push({x:item.x, y:(avgInc*(index))});
-            })
+            for(let index=0; index < chartDataRki.length; index++) {
+                chartDateInc.push({x:chartDataRki[index].x, y:(avgInc*(index))});
+            }
             return chartDateInc;
         }
 
@@ -293,98 +270,119 @@
             return moment().startOf('day').add(days, 'd')
         }
 
-        // facts
-        document.getElementById('population').textContent = population;
-        document.getElementById('required').textContent = remainingVaccinations(goalPercentage);
-        document.getElementById('sumVac').textContent = sumVaccinations();
-        document.getElementById('avgVac').textContent = Math.floor(avgVaccinationsPerDay(7));
-        document.getElementById('avgVacInc7Days').textContent = Math.floor(avgAreaIncreasePerDay(7));
-        document.getElementById('avgVacInc').textContent = Math.floor(avgAreaIncreasePerDay(chartDataRki.length));
-        document.getElementById('updateDate').textContent = getLastMeassuredMoment().format(outputFormat);
+        function updatePage() {
+            // facts
+            document.getElementById('population').textContent = population;
+            document.getElementById('required').textContent = remainingVaccinations(goalPercentage);
+            document.getElementById('sumVac').textContent = sumVaccinations();
+            document.getElementById('avgVac').textContent = Math.floor(avgVaccinationsPerDay(7));
+            document.getElementById('avgVacInc7Days').textContent = Math.floor(avgAreaIncreasePerDay(7));
+            document.getElementById('avgVacInc').textContent = Math.floor(avgAreaIncreasePerDay(chartDataRki.length));
+            document.getElementById('updateDate').textContent = getLastMeassuredMoment().format(outputFormat);
 
-        // estimated
-        var dailyRate = avgVaccinationsPerDay(7);
-        var dailyInc = avgAreaIncreasePerDay(chartDataRki.length);
+            // estimated
+            var dailyRate = avgVaccinationsPerDay(7);
+            var dailyInc = avgAreaIncreasePerDay(chartDataRki.length);
 
-        let goalMoment=calcGoalMoment(dailyRate, goalPercentage);
-        document.getElementById('goalDate').textContent = goalMoment.format(outputFormat);
+            let goalMoment = calcGoalMoment(dailyRate, goalPercentage);
+            document.getElementById('goalDate').textContent = goalMoment.format(outputFormat);
 
-        let goalMomentInc=calcGoalMomentLinear(dailyRate, dailyInc, goalPercentage);
-        document.getElementById('goalDateInc').textContent = goalMomentInc.format(outputFormat);
+            let goalMomentInc = calcGoalMomentLinear(dailyRate, dailyInc, goalPercentage);
+            document.getElementById('goalDateInc').textContent = goalMomentInc.format(outputFormat);
 
-        document.getElementById('maxVac').textContent = maxVacsPerDay;
+            document.getElementById('maxVac').textContent = maxVacsPerDay;
 
-        function tick() {
-            var timeLeft = calcTimeToGoFromNow(goalMoment);
-            document.getElementById('timeLeft').textContent = timeLeft;
+            function tick() {
+                var timeLeft = calcTimeToGoFromNow(goalMoment);
+                document.getElementById('timeLeft').textContent = timeLeft;
 
-            var timeLeftInc = calcTimeToGoFromNow(goalMomentInc);
-            document.getElementById('timeLeftInc').textContent = timeLeftInc;
+                var timeLeftInc = calcTimeToGoFromNow(goalMomentInc);
+                document.getElementById('timeLeftInc').textContent = timeLeftInc;
 
 
-            document.getElementById('timeLeftFat').textContent = timeLeftInc;
+                document.getElementById('timeLeftFat').textContent = timeLeftInc;
+            }
+
+            tick();
+
+            window.setInterval(function () {
+                tick();
+            }, 1000);
+
+
+            chart = new Chart(ctx, {
+                // The type of chart we want to create
+                type: 'line',
+
+                // The data for our dataset
+                data: {
+                    datasets: [
+                        {
+                            label: 'Mittlere Steigerungsrate (komplette Zeit)',
+                            backgroundColor: 'rgba(157,181,203)',
+                            borderColor: 'rgba(6,100,215)',
+                            fill: false,
+                            data: calcLinearChartDataByArea()
+                        },
+                        {
+                            label: 'Impfungen pro Tag (Stand RKI)',
+                            backgroundColor: 'rgb(212,231,205)',
+                            borderColor: 'rgb(91,183,29)',
+                            data: chartDataRki
+                        },
+                        {
+                            label: 'Hochrechnung: linear',
+                            backgroundColor: 'rgb(233,213,233)',
+                            borderColor: 'rgb(176,87,226)',
+                            fill: true,
+                            data: chartIncEstimation
+                        }
+                    ]
+                },
+
+                // Configuration options go here
+                options: {
+                    scales: {
+                        xAxes: [{
+                            type: 'time',
+                            time: {
+                                parser: rkiDateFormat,
+                                unit: 'day'
+                            },
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'Datum'
+                            }
+                        }],
+                        yAxes: [{
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'Impfungen pro Tag'
+                            }
+                        }]
+                    }
+                }
+            });
         }
 
-        tick();
-
-        window.setInterval(function(){
-            tick();
-        }, 1000);
-
-
-        var chart = new Chart(ctx, {
-            // The type of chart we want to create
-            type: 'line',
-
-            // The data for our dataset
-            data: {
-                datasets: [
-                    {
-                        label: 'Mittlere Steigerungsrate (komplette Zeit)',
-                        backgroundColor: 'rgba(157,181,203)',
-                        borderColor: 'rgba(6,100,215)',
-                        fill: false,
-                        data: calcLinearChartDataByArea()
-                    },
-                    {
-                        label: 'Impfungen pro Tag (Stand RKI)',
-                        backgroundColor: 'rgb(212,231,205)',
-                        borderColor: 'rgb(91,183,29)',
-                        data: chartDataRki
-                    },
-                    {
-                        label: 'Hochrechnung: linear',
-                        backgroundColor: 'rgb(233,213,233)',
-                        borderColor: 'rgb(176,87,226)',
-                        fill: true,
-                        data: chartIncEstimation
-                    }
-                ]
-            },
-
-            // Configuration options go here
-            options: {
-                scales: {
-                    xAxes: [{
-                        type: 'time',
-                        time: {
-                            parser: rkiDateFormat,
-                            unit: 'day'
-                        },
-                        scaleLabel: {
-                            display: true,
-                            labelString: 'Datum'
-                        }
-                    }],
-                    yAxes: [{
-                        scaleLabel: {
-                            display: true,
-                            labelString: 'Impfungen pro Tag'
-                        }
-                    }]
+        //read data from tsv
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function() {
+            if (xhttp.readyState == 4 && xhttp.status == 200) {
+                let lines = xhttp.responseText.trim().split('\n');
+                for(let lineIndex=1; lineIndex< lines.length; lineIndex++) {
+                    let line = lines[lineIndex];
+                    let dataset = line.split('\t');
+                    chartDataRki.push({x: dataset[0], y: parseInt(dataset[2])});
                 }
+                updatePage();
             }
-        });
+
+        };
+        //unable to load file directly into webapp because of CORS: https://impfdashboard.de/static/data/germany_vaccinations_timeseries_v2.tsv
+        //xhttp.open("GET", "./germany_vaccinations_timeseries_v2.tsv", true);
+        xhttp.open("GET", "https://impfdashboard.de/static/data/germany_vaccinations_timeseries_v2.tsv", true);
+        xhttp.send();
         //-->
     </script>
     </body>
