@@ -332,6 +332,12 @@
                             data: calcLinearChartDataByArea()
                         },
                         {
+                            label: 'Zweit-Impfungen pro Tag (Stand RKI)',
+                            backgroundColor: 'rgb(123,179,102)',
+                            borderColor: 'rgb(64,140,13)',
+                            data: chartDataRkiSecondVac
+                        },
+                        {
                             label: 'Impfungen pro Tag (Stand RKI)',
                             backgroundColor: 'rgb(212,231,205)',
                             borderColor: 'rgb(91,183,29)',
@@ -377,11 +383,33 @@
         xhttp.onreadystatechange = function() {
             if (xhttp.readyState === 4 && xhttp.status === 200) {
                 let lines = xhttp.responseText.trim().split('\n');
+                let secondVacPreviousDay = 0;
                 for(let lineIndex=1; lineIndex< lines.length; lineIndex++) {
                     let line = lines[lineIndex];
                     let dataset = line.split('\t');
-                    chartDataRki.push({x: dataset[0], y: parseInt(dataset[2])});
-                    chartDataRkiSecondVac.push({x: dataset[0], y: parseInt(dataset[2])});
+                    if(lineIndex === 1) {
+
+                        //add first day with zero vacs
+                        let dayZero = moment(dataset[0], rkiDateFormat).add(-1,'d').format(rkiDateFormat)
+                        chartDataRki.push({x: dayZero, y: 0});
+
+                        // First dataset is wrong: First dosen_differenz_zum_vortag must be same value as dosen_kumulativ but it is Zero.
+                        chartDataRki.push({x: dataset[0], y: parseInt(dataset[1])});
+                    } else {
+                        chartDataRki.push({x: dataset[0], y: parseInt(dataset[2])});
+                    }
+                    //second vac personen_voll_kumulativ
+                    let secondVacCurrentDay = parseInt(dataset[6]);
+                    let secondVacDiff = secondVacCurrentDay - secondVacPreviousDay;
+                    if(secondVacCurrentDay != 0) {
+                        if(secondVacPreviousDay == 0) {
+                            //add first day with zero vacs
+                            let dayZero = moment(dataset[0], rkiDateFormat).add(-1,'d').format(rkiDateFormat)
+                            chartDataRkiSecondVac.push({x: dayZero, y: 0})
+                        }
+                        chartDataRkiSecondVac.push({x: dataset[0], y: secondVacDiff})
+                    }
+                    secondVacPreviousDay = secondVacCurrentDay;
                 }
                 updatePage();
             }
