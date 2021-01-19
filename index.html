@@ -4,8 +4,8 @@
         <title>Hochrechnung COVID-19 Impfquote Deutschland</title>
 
         <meta charset="UTF-8">
-        <meta name="description" content="Hochrechnung COVID-19 Impfquote Deutschland. Zeigt die verbleibende Zeit bis zur Herdenimmunitaet.">
-        <meta name="keywords" content="Hochrechnung, COVID-19, Impfquote, Deutschland, Impfungen, Wann, durchgeimpft, Ende, Corona, Schaetzung, Timer, Ticker, Countdown">
+        <meta name="description" content="Hochrechnung COVID-19 Impfrate Deutschland. Zeigt die verbleibende Zeit bis zur Herdenimmunitaet.">
+        <meta name="keywords" content="Hochrechnung, COVID-19, Impfrate, Deutschland, Impfungen, Wann, durchgeimpft, Ende, Corona, Schaetzung, Timer, Ticker, Countdown">
         <meta name="author" content="Patrick Waldschmitt">
 
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
@@ -33,7 +33,7 @@
 
         <div class="container text-center w-100 timeLeftFatContainer">
             <div class="timeLeftFatContainer">
-                <label>Gesch&auml;tzte verbleibende Zeit bis zur Herdenimmunit&auml;t (70%) bei linear steigender Impfquote</label>
+                <label>Gesch&auml;tzte verbleibende Zeit bis zur Herdenimmunit&auml;t (70%) bei linear steigender Impfrate</label>
                 <div id="timeLeftFat"></div>
                 <br/>
                 <br/>
@@ -59,11 +59,11 @@
                     <div class="col-6 text-right" id="required"></div>
                 </div>
                 <div class="row">
-                    <label class="col-6">Impfungen verabreicht:</label>
+                    <label class="col-6">Summe der verabreichten Impfungen:</label>
                     <div class="col-6 text-right" id="sumVac"></div>
                 </div>
                 <div class="row">
-                    <label class="col-6">Impfquote (7-Tage-Wert):</label>
+                    <label class="col-6">Durchschnittliche Impfrate (7-Tage-Wert):</label>
                     <div class="col-6 text-right" id="avgVac"></div>
                 </div>
                 <div class="row">
@@ -81,7 +81,7 @@
             <h3>Hochrechnung</h3>
 
             <div class="container p-2">
-                <h5>Konstante Impfquote (7-Tage-Wert)</h5>
+                <h5>Konstante Impfrate (7-Tage-Wert)</h5>
                 <div class="row">
                     <label class="col-6">Herdenimmunitaet (70%) erreicht am:</label>
                     <div class="col-6 text-right" id="goalDate"></div>
@@ -93,7 +93,7 @@
             </div>
 
             <div class="container p-2">
-                <h5>Linear ansteigende Impfquote (Mittelwert &uuml;ber alle Daten)</h5>
+                <h5>Linear ansteigende Impfrate (Mittelwert &uuml;ber alle Daten)</h5>
                 <div class="row">
                     <label class="col-6">Gesch&auml;tzte maximale Impfkapazitaet pro Tag (bei ca 460 Impfzentren):</label>
                     <div class="col-6 text-right" id="maxVac"></div>
@@ -132,6 +132,7 @@
         let rkiDateFormat = 'YYYY-MM-DD';
         let outputFormat = 'DD MMM YYYY';
         let chartDataRki = [];
+        let chartDataRkiSecondVac = [];
 
         let chartIncEstimation = [];
 
@@ -380,6 +381,7 @@
                     let line = lines[lineIndex];
                     let dataset = line.split('\t');
                     chartDataRki.push({x: dataset[0], y: parseInt(dataset[2])});
+                    chartDataRkiSecondVac.push({x: dataset[0], y: parseInt(dataset[2])});
                 }
                 updatePage();
             }
