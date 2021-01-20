@@ -397,8 +397,8 @@
                     //second vac personen_voll_kumulativ
                     let secondVacCurrentDay = parseInt(dataset[6]);
                     let secondVacDiff = secondVacCurrentDay - secondVacPreviousDay;
-                    if(secondVacCurrentDay != 0) {
-                        if(secondVacPreviousDay == 0) {
+                    if(secondVacCurrentDay !== 0) {
+                        if(secondVacPreviousDay === 0) {
                             //add first day with zero vacs
                             let dayZero = moment(dataset[0], rkiDateFormat).add(-1,'d').format(rkiDateFormat)
                             chartDataRkiSecondVac.push({x: dayZero, y: 0})
