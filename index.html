@@ -4,7 +4,7 @@
         <title>Hochrechnung COVID-19 Impfrate Deutschland</title>
 
         <meta charset="UTF-8">
-        <meta name="description" content="Hochrechnung COVID-19 Impfrate Deutschland. Zeigt die verbleibende Zeit bis zur Herdenimmunitaet.">
+        <meta name="description" content="Hochrechnung COVID-19 Impfrate Deutschland. Zeigt die verbleibende Zeit bis zur 80%igen Durchimpfung Deutschlands.">
         <meta name="keywords" content="Hochrechnung, COVID-19, Impfrate, Deutschland, Impfungen, Wann, durchgeimpft, Ende, Corona, Schaetzung, Timer, Ticker, Countdown">
         <meta name="author" content="Patrick Waldschmitt">
 
@@ -33,7 +33,7 @@
 
         <div class="container text-center w-100 timeLeftFatContainer">
             <div class="timeLeftFatContainer">
-                <label>Gesch&auml;tzte verbleibende Zeit bis zur Herdenimmunit&auml;t (70%) bei linear steigender Impfrate</label>
+                <label>Gesch&auml;tzte verbleibende Zeit bis zur 80%igen Durchimpfung Deutschlands bei linear steigender Impfrate</label>
                 <div id="timeLeftFat"></div>
                 <br/>
                 <br/>
@@ -55,7 +55,7 @@
                     <div class="col-6 text-right" id="population"></div>
                 </div>
                 <div class="row">
-                    <label class="col-6">Herdenimmunitaet (70% x 2 Dosen) erreicht bei:</label>
+                    <label class="col-6">Durchimpfung Deutschlands (gesch&auml;tzt 80% x 2 Dosen) erreicht bei:</label>
                     <div class="col-6 text-right" id="required"></div>
                 </div>
                 <div class="row">
@@ -83,11 +83,11 @@
             <div class="container p-2">
                 <h5>Konstante Impfrate (7-Tage-Wert)</h5>
                 <div class="row">
-                    <label class="col-6">Herdenimmunitaet (70%) erreicht am:</label>
+                    <label class="col-6">80%igen Durchimpfung Deutschlands erreicht am:</label>
                     <div class="col-6 text-right" id="goalDate"></div>
                 </div>
                 <div class="row">
-                    <label class="col-6">Verbleibende Zeit bis zur Herdenimmunit&auml;t:</label>
+                    <label class="col-6">Verbleibende Zeit bis zur 80%igen Durchimpfung Deutschlands:</label>
                     <div class="col-6 text-right" id="timeLeft"></div>
                 </div>
             </div>
@@ -99,11 +99,11 @@
                     <div class="col-6 text-right" id="maxVac"></div>
                 </div>
                 <div class="row">
-                    <label class="col-6">Herdenimmunitaet (70%) erreicht am:</label>
+                    <label class="col-6">80%igen Durchimpfung Deutschlands erreicht am:</label>
                     <div class="col-6 text-right" id="goalDateInc"></div>
                 </div>
                 <div class="row">
-                    <label class="col-6">Verbleibende Zeit bis zur Herdenimmunit&auml;t:</label>
+                    <label class="col-6">Verbleibende Zeit bis zur 80%igen Durchimpfung Deutschlands:</label>
                     <div class="col-6 text-right" id="timeLeftInc"></div>
                 </div>
             </div>
@@ -116,7 +116,7 @@
             <h3>Disclaimer</h3>
             <div class="container p-2">
                 <p>Bei den Hochrechnungen handelt es sich um sehr einfache Modelle, die hoechstens eine qualitative Abschaetzung ermoeglichen.</p>
-                <p>Die Herdenimmunitaet wurde fuer die Berechnungen auf einen Wert festgesetzt, der bei Impfung von 70% der Bevoelkerung erreicht ist. Bei diesem Wert handelt es sich um eine grobe Schaetzung. Der Wert fundiert nicht auf recherchierten Wissenschaftlichen Erkenntnissen.</p>
+                <p>Die Durchimpfung Deutschlands wurde fuer die Berechnungen auf einen Wert festgesetzt, der bei Impfung von 80% der Bevoelkerung erreicht ist. Bei diesem Wert handelt es sich um eine grobe Schaetzung. Der Wert fundiert nicht auf recherchierten Wissenschaftlichen Erkenntnissen.</p>
                 <p>Fuer die Korrektheit der Daten kann ich nicht garantieren und uebernehme dafuer keine Haftung.</p>
             </div>
         </div>
@@ -137,7 +137,7 @@
         let chartIncEstimation = [];
 
         let population = 83020000;
-        let goalPercentage = 70.0 * 2.0;
+        let goalPercentage = 80.0 * 2.0;
         let maxVacsPerDay = 460000;
         let chart = null;
 
