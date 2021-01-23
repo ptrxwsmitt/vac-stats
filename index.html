@@ -49,40 +49,42 @@
 
         <div class="container">
             <h3>Aktueller Stand (RKI, <span id="updateDate"></span>)</h3>
+
             <div class="container p-2">
                 <div class="row">
                     <label class="col-6">Bevölkerung Deutschlands:</label>
-                    <div class="col-6 text-right" id="population"></div>
+                    <div class="col-6 text-end" id="population"></div>
                 </div>
                 <div class="row">
                     <label class="col-6">Summe der verabreichten Impfungen:</label>
-                    <div class="col-6 text-right" id="sumVac"></div>
+                    <div class="col-6 text-end" style="text-align: right" id="sumVac"></div>
                 </div>
                 <div class="row">
                     <label class="col-6">Durchschnittliche Impfrate (7-Tage-Wert):</label>
-                    <div class="col-6 text-right" id="avgVac"></div>
+                    <div class="col-6 text-end" id="avgVac"></div>
                 </div>
                 <div class="row">
                     <label class="col-6">Mittlere Steigerungsrate der Impfungen (7-Tage-Wert):</label>
-                    <div class="col-6 text-right" id="avgVacInc7Days"></div>
+                    <div class="col-6 text-end" id="avgVacInc7Days"></div>
                 </div>
                 <div class="row">
                     <label class="col-6">Mittlere Steigerungsrate der Impfungen (Mittelwert über alle Daten):</label>
-                    <div class="col-6 text-right" id="avgVacInc"></div>
+                    <div class="col-6 text-end" id="avgVacInc"></div>
                 </div>
             </div>
         </div>
 
         <div class="container">
             <h3>Annahmen</h3>
+
             <div class="container p-2">
                 <div class="row">
                     <label class="col-6">Durchimpfung Deutschlands (geschätzt 80% x 2 Dosen) erreicht bei:</label>
-                    <div class="col-6 text-right" id="required"></div>
+                    <div class="col-6 text-end" id="required"></div>
                 </div>
                 <div class="row">
                     <label class="col-6">Geschätzte maximale Impfkapazität pro Tag (<a href="https://kommunal.de/impfzentren-Standorte">bei ca 460 Impfzentren</a>):</label>
-                    <div class="col-6 text-right" id="maxVac"></div>
+                    <div class="col-6 text-end" id="maxVac"></div>
                 </div>
             </div>
         </div>
@@ -94,11 +96,11 @@
                 <h5>Konstante Impfrate (7-Tage-Wert)</h5>
                 <div class="row">
                     <label class="col-6">80%igen Durchimpfung Deutschlands erreicht am:</label>
-                    <div class="col-6 text-right" id="goalDate"></div>
+                    <div class="col-6" id="goalDate"></div>
                 </div>
                 <div class="row">
                     <label class="col-6">Verbleibende Zeit bis zur 80%igen Durchimpfung Deutschlands:</label>
-                    <div class="col-6 text-right" id="timeLeft"></div>
+                    <div class="col-6" id="timeLeft"></div>
                 </div>
             </div>
 
@@ -106,11 +108,11 @@
                 <h5>Linear ansteigende Impfrate (Mittelwert über alle Daten)</h5>
                 <div class="row">
                     <label class="col-6">80%igen Durchimpfung Deutschlands erreicht am:</label>
-                    <div class="col-6 text-right" id="goalDateInc"></div>
+                    <div class="col-6" id="goalDateInc"></div>
                 </div>
                 <div class="row">
                     <label class="col-6">Verbleibende Zeit bis zur 80%igen Durchimpfung Deutschlands:</label>
-                    <div class="col-6 text-right" id="timeLeftInc"></div>
+                    <div class="col-6" id="timeLeftInc"></div>
                 </div>
             </div>
 
@@ -304,17 +306,26 @@
             return moment().startOf('day').add(days, 'd')
         }
 
+        function formatNumberWithDots(x) {
+            return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+        }
+
         function updatePage() {
-            // facts
-            document.getElementById('population').textContent = population;
-            document.getElementById('required').textContent = remainingVaccinations(goalPercentage);
-            document.getElementById('sumVac').textContent = sumVaccinations();
-            document.getElementById('avgVac').textContent = Math.floor(avgVaccinationsPerDay(7));
-            document.getElementById('avgVacInc7Days').textContent = Math.floor(avgAreaIncreasePerDay(7));
-            document.getElementById('avgVacInc').textContent = Math.floor(avgAreaIncreasePerDay(chartDataRki.length));
+            // title
             document.getElementById('updateDate').textContent = getLastMeassuredMoment().format(outputFormat);
 
+            // facts
+            document.getElementById('population').textContent = formatNumberWithDots(population);
+            document.getElementById('sumVac').textContent = formatNumberWithDots(sumVaccinations());
+            document.getElementById('avgVac').textContent = formatNumberWithDots(Math.floor(avgVaccinationsPerDay(7)));
+            document.getElementById('avgVacInc7Days').textContent = formatNumberWithDots(Math.floor(avgAreaIncreasePerDay(7)));
+            document.getElementById('avgVacInc').textContent = formatNumberWithDots(Math.floor(avgAreaIncreasePerDay(chartDataRki.length)));
+
             // estimated
+
+            document.getElementById('required').textContent = formatNumberWithDots(remainingVaccinations(goalPercentage));
+            document.getElementById('maxVac').textContent = formatNumberWithDots(maxVacsPerDay);
+
             var dailyRate = avgVaccinationsPerDay(7);
             var dailyInc = avgAreaIncreasePerDay(chartDataRki.length);
 
@@ -324,7 +335,6 @@
             let goalMomentInc = calcGoalMomentLinear(dailyRate, dailyInc, goalPercentage);
             document.getElementById('goalDateInc').textContent = goalMomentInc.format(outputFormat);
 
-            document.getElementById('maxVac').textContent = maxVacsPerDay;
 
             function tick() {
                 var timeLeft = calcTimeToGoFromNow(goalMoment);
