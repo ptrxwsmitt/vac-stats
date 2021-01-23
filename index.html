@@ -5,7 +5,7 @@
 
         <meta charset="UTF-8">
         <meta name="description" content="Hochrechnung COVID-19 Impfrate Deutschland. Zeigt die verbleibende Zeit bis zur 80%igen Durchimpfung Deutschlands.">
-        <meta name="keywords" content="Hochrechnung, COVID-19, Impfrate, Deutschland, Impfungen, Wann, durchgeimpft, Ende, Corona, Schaetzung, Timer, Ticker, Countdown">
+        <meta name="keywords" content="Hochrechnung, COVID-19, Impfrate, Deutschland, Impfungen, Wann, durchgeimpft, Ende, Corona, Schätzung, Timer, Ticker, Countdown">
         <meta name="author" content="Patrick Waldschmitt">
 
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
@@ -33,7 +33,7 @@
 
         <div class="container text-center w-100 timeLeftFatContainer">
             <div class="timeLeftFatContainer">
-                <label>Gesch&auml;tzte verbleibende Zeit bis zur 80%igen Durchimpfung Deutschlands bei linear steigender Impfrate</label>
+                <label>Geschätzte verbleibende Zeit bis zur 80%igen Durchimpfung Deutschlands bei linear steigender Impfrate</label>
                 <div id="timeLeftFat"></div>
                 <br/>
                 <br/>
@@ -51,7 +51,7 @@
             <h3>Aktueller Stand (RKI, <span id="updateDate"></span>)</h3>
             <div class="container p-2">
                 <div class="row">
-                    <label class="col-6">Bevoelkerung Deutschlands:</label>
+                    <label class="col-6">Bevölkerung Deutschlands:</label>
                     <div class="col-6 text-right" id="population"></div>
                 </div>
                 <div class="row">
@@ -81,7 +81,7 @@
                     <div class="col-6 text-right" id="required"></div>
                 </div>
                 <div class="row">
-                    <label class="col-6">Gesch&auml;tzte maximale Impfkapazitaet pro Tag (<a href="https://kommunal.de/impfzentren-Standorte">bei ca 460 Impfzentren</a>):</label>
+                    <label class="col-6">Gesch&auml;tzte maximale Impfkapazität pro Tag (<a href="https://kommunal.de/impfzentren-Standorte">bei ca 460 Impfzentren</a>):</label>
                     <div class="col-6 text-right" id="maxVac"></div>
                 </div>
             </div>
@@ -121,10 +121,10 @@
         <div class="container">
             <h3>Disclaimer</h3>
             <div class="container p-2">
-                <p>Bei den Hochrechnungen handelt es sich um sehr einfache Modelle, die hoechstens eine qualitative Abschaetzung ermoeglichen.</p>
-                <p>Die Durchimpfung Deutschlands wurde fuer die Berechnungen auf einen Wert festgesetzt, der bei Impfung von 80% der Bevoelkerung erreicht ist. Bei diesem Wert handelt es sich um eine grobe Schaetzung. Der Wert fundiert nicht auf recherchierten wissenschaftlichen Erkenntnissen.</p>
-                <p>Fuer die Korrektheit der Daten kann ich nicht garantieren und uebernehme dafuer keine Haftung.</p>
-                <p>Fuer den Inhalt der verlinkten Seiten uebernehme ich keine Haftung.</p>
+                <p>Bei den Hochrechnungen handelt es sich um sehr einfache Modelle, die höchstens eine qualitative Abschätzung ermöglichen.</p>
+                <p>Die Durchimpfung Deutschlands wurde für die Berechnungen auf einen Wert festgesetzt, der bei Impfung von 80% der Bevölkerung erreicht ist. Bei diesem Wert handelt es sich um eine grobe Schätzung. Der Wert fundiert nicht auf recherchierten wissenschaftlichen Erkenntnissen.</p>
+                <p>Für die Korrektheit der Daten kann ich nicht garantieren und übernehme dafür keine Haftung.</p>
+                <p>Für den Inhalt der verlinkten Seiten übernehme ich keine Haftung.</p>
             </div>
         </div>
     </div>
@@ -218,32 +218,52 @@
         }
 
         function readableDiff(start, end){
-            var years = end.diff(start, 'years')
+            let years = end.diff(start, 'years')
             end = end.add(-years, 'years');
-            var months = end.diff(start, 'months')
+            let months = end.diff(start, 'months')
             end = end.add(-months, 'months');
-            var days = end.diff(start, 'days')
+            let days = end.diff(start, 'days')
             end = end.add(-days, 'days');
-            var hours = end.diff(start, 'hours')
+            let hours = end.diff(start, 'hours')
             end = end.add(-hours, 'hours');
-            var minutes = end.diff(start, 'minutes')
+            let minutes = end.diff(start, 'minutes')
             end = end.add(-minutes, 'minutes');
-            var seconds = end.diff(start, 'seconds')
+            let seconds = end.diff(start, 'seconds')
             //end = end.add(-seconds, 'seconds');
 
-            var text = days+' Tage  '+hours+' Stunden  '+minutes+' Minuten  '+seconds+' Sekunden';
-            if(months) {
-                text = months+' Monate  ' + text
-            }
-            if(years) {
-                text = years+' Jahre  ' + text
-            }
+            let text = '';
+            let showUnit = true;
+
+            showUnit &&= years;
+            text += buildTimeText(years, 'Jahr', 'Jahre', showUnit);
+
+            showUnit &&= months;
+            text += buildTimeText(months, 'Monat', 'Monate', showUnit);
+
+            showUnit &&= days;
+            text += buildTimeText(days, 'Tag', 'Tage', showUnit);
+
+            showUnit &&= hours;
+            text += buildTimeText(hours, 'Stunde', 'Stunden', showUnit);
+
+            showUnit &&= minutes;
+            text += buildTimeText(minutes, 'Minute', 'Minuten', showUnit);
+
+            text += buildTimeText(seconds, 'Sekunde', 'Sekunden', showUnit);
             return text;
         }
 
+        function buildTimeText(time, singular, plural, showAnyway) {
+            if(time || showAnyway) {
+                return time + ' ' + (time === 1 ? singular : plural) + ' ';
+            } else {
+                return '';
+            }
+        }
+
         function calcTimeToGoFromNow(goalMoment) {
-            var now = moment();
-            var end = goalMoment.clone();
+            let now = moment();
+            let end = goalMoment.clone();
             return readableDiff(now, end);
         }
 
