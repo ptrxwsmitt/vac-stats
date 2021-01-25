@@ -71,6 +71,18 @@
                     <label class="col-6">Mittlere Steigerungsrate der Impfungen (Mittelwert über alle Daten):</label>
                     <div class="col-6 text-end" id="avgVacInc"></div>
                 </div>
+
+            </div>
+            <div class="container p-2">
+                <h5>Zweitimpfung</h5>
+                <div class="row">
+                    <label class="col-6">Ausstehende Zweitimpfungen (<span id="secondVacMinDays"></span> Tage - <span id="secondVacMaxDays"></span> Tage nach Erstimpfung):</label>
+                    <div class="col-6 text-end" id="remainingSecondVacs"></div>
+                </div>
+                <!-- <div class="row">
+                    <label class="col-6">Überfällige Zweitimpfungen (> <span id="secondVacMaxDaysOverdue"></span> Tage nach Erstimpfung):</label>
+                    <div class="col-6 text-end" id="overdueSecondVacs"></div>
+                </div> -->
             </div>
         </div>
 
@@ -140,14 +152,22 @@
 
         let rkiDateFormat = 'YYYY-MM-DD';
         let outputFormat = 'DD MMM YYYY';
-        let chartDataRki = [];
-        let chartDataRkiSecondVac = [];
 
-        let chartIncEstimation = [];
-
+        // settings
         let population = 83020000;
         let goalPercentage = 80.0 * 2.0;
         let maxVacsPerDay = 460000;
+        let secondVacMinDays = 19;
+        let secondVacMaxDays = 42;
+
+        // calculated data
+        let chartDataRki = [];
+        let chartDataRkiSecondVac = [];
+        let chartIncEstimation = [];
+
+        let remainingSecondVacs = 0;
+        let overdueSecondVacs = 0;
+
         let chart = null;
 
         function sumVaccinations() {
@@ -321,6 +341,12 @@
             document.getElementById('avgVacInc7Days').textContent = formatNumberWithDots(Math.floor(avgAreaIncreasePerDay(7)));
             document.getElementById('avgVacInc').textContent = formatNumberWithDots(Math.floor(avgAreaIncreasePerDay(chartDataRki.length)));
 
+            document.getElementById('secondVacMinDays').textContent = secondVacMinDays;
+            document.getElementById('secondVacMaxDays').textContent = secondVacMaxDays;
+            document.getElementById('remainingSecondVacs').textContent = formatNumberWithDots(remainingSecondVacs);
+            //document.getElementById('secondVacMaxDaysOverdue').textContent = secondVacMaxDays;
+            //document.getElementById('overdueSecondVacs').textContent = formatNumberWithDots(overdueSecondVacs);
+
             // estimated
 
             document.getElementById('required').textContent = formatNumberWithDots(remainingVaccinations(goalPercentage));
@@ -416,11 +442,23 @@
         }
 
         //read data from tsv
-        var xhttp = new XMLHttpRequest();
+        let xhttp = new XMLHttpRequest();
         xhttp.onreadystatechange = function() {
             if (xhttp.readyState === 4 && xhttp.status === 200) {
+                remainingSecondVacs = 0;
+                overdueSecondVacs = 0;
                 let lines = xhttp.responseText.trim().split('\n');
                 let secondVacPreviousDay = 0;
+
+                // minimum is 1
+                let secondVacMaxIndex = Math.max( 1, (lines.length-1-secondVacMinDays));
+                let secondVacMinIndex = Math.max( 1, (lines.length-1-secondVacMaxDays));
+
+                let sumBeforeSecondVacTimeframe = 0;
+                let sumInSecondVacTimeframe = 0;
+                let sumAfterSecondVacTimeframe = 0;
+                let sumSecondVac = 0;
+
                 for(let lineIndex=1; lineIndex< lines.length; lineIndex++) {
                     let line = lines[lineIndex];
                     let dataset = line.split('\t');
@@ -429,7 +467,8 @@
                         let dayZero = moment(dataset[0], rkiDateFormat).add(-1,'d').format(rkiDateFormat)
                         chartDataRki.push({x: dayZero, y: 0});
                     }
-                    chartDataRki.push({x: dataset[0], y: parseInt(dataset[2])});
+                    let vacsCurrentDay = parseInt(dataset[2]);
+                    chartDataRki.push({x: dataset[0], y: vacsCurrentDay});
 
                     //second vac personen_voll_kumulativ
                     let secondVacCurrentDay = parseInt(dataset[6]);
@@ -443,7 +482,23 @@
                         chartDataRkiSecondVac.push({x: dataset[0], y: secondVacDiff})
                     }
                     secondVacPreviousDay = secondVacCurrentDay;
+
+                    if(lineIndex < secondVacMinIndex) {
+                        //DEBUG console.log('after range: '+dataset[0]);
+                        sumAfterSecondVacTimeframe += vacsCurrentDay;
+                    } else if(lineIndex > secondVacMaxIndex) {
+                        //DEBUG console.log('before range: '+dataset[0]);
+                        sumBeforeSecondVacTimeframe += vacsCurrentDay;
+                    } else {
+                        //DEBUG console.log('within range: '+dataset[0]);
+                        sumInSecondVacTimeframe += vacsCurrentDay;
+                    }
+
+                    sumSecondVac += secondVacDiff;
                 }
+                overdueSecondVacs = Math.max(0,sumAfterSecondVacTimeframe - sumSecondVac);
+                remainingSecondVacs = (sumInSecondVacTimeframe) + (sumAfterSecondVacTimeframe - sumSecondVac);
+
                 updatePage();
             }
 
