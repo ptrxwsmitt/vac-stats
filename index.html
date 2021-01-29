@@ -79,10 +79,10 @@
                     <label class="col-6">Ausstehende Zweitimpfungen (<span id="secondVacMinDays"></span> Tage - <span id="secondVacMaxDays"></span> Tage nach Erstimpfung):</label>
                     <div class="col-6 text-end" id="remainingSecondVacs"></div>
                 </div>
-                <!-- <div class="row">
+                <div class="row">
                     <label class="col-6">Überfällige Zweitimpfungen (> <span id="secondVacMaxDaysOverdue"></span> Tage nach Erstimpfung):</label>
                     <div class="col-6 text-end" id="overdueSecondVacs"></div>
-                </div> -->
+                </div>
             </div>
         </div>
 
@@ -344,8 +344,8 @@
             document.getElementById('secondVacMinDays').textContent = secondVacMinDays;
             document.getElementById('secondVacMaxDays').textContent = secondVacMaxDays;
             document.getElementById('remainingSecondVacs').textContent = formatNumberWithDots(remainingSecondVacs);
-            //document.getElementById('secondVacMaxDaysOverdue').textContent = secondVacMaxDays;
-            //document.getElementById('overdueSecondVacs').textContent = formatNumberWithDots(overdueSecondVacs);
+            document.getElementById('secondVacMaxDaysOverdue').textContent = secondVacMaxDays;
+            document.getElementById('overdueSecondVacs').textContent = formatNumberWithDots(overdueSecondVacs);
 
             // estimated
 
