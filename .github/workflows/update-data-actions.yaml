@@ -1,0 +1,24 @@
+name: update-data
+on:
+  schedule:
+    - cron:  '* */2 * * *'
+jobs:
+  updated-data:
+    steps:
+      - name: checkout
+        uses: actions/checkout@master
+        with:
+          ref: master
+      - run: md5sum germany_vaccinations_timeseries_v2.tsv | awk '{ print $1 }' > currentHash
+      - run: wget https://impfdashboard.de/static/data/germany_vaccinations_timeseries_v2.tsv --output-document germany_vaccinations_timeseries_v2.tsv.new
+      - run: md5sum germany_vaccinations_timeseries_v2.tsv.new | awk '{ print $1 }' > newHash
+      - run: if [[ "$(cat currentHash)" != "$(cat newHash)" ]] ; then ; mv -f germany_vaccinations_timeseries_v2.tsv.new germany_vaccinations_timeseries_v2.tsv ; fi
+      - name: push
+        uses: github-actions-x/commit@v2.7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          push-branch: 'master'
+          commit-message: 'updated data'
+          force-add: 'true'
+          files: germany_vaccinations_timeseries_v2.tsv
+          name: update-data-actions
