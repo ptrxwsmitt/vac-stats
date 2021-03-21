@@ -17,7 +17,7 @@ jobs:
       - run: 'wget https://impfdashboard.de/static/data/germany_vaccinations_timeseries_v2.tsv --output-document germany_vaccinations_timeseries_v2.tsv.new'
       - run: md5sum germany_vaccinations_timeseries_v2.tsv.new | awk '{ print $1 }' > newHash
       - run: 'echo "comparing hashes: $(cat currentHash) against $(cat newHash)"'
-      - run: 'if [[ "$(cat currentHash)" != "$(cat newHash)" ]] ; then ; mv -f germany_vaccinations_timeseries_v2.tsv.new germany_vaccinations_timeseries_v2.tsv ; fi'
+      - run: 'if [[ "$(cat currentHash)" != "$(cat newHash)" ]] ; then mv -f germany_vaccinations_timeseries_v2.tsv.new germany_vaccinations_timeseries_v2.tsv ; fi'
       - name: push
         uses: github-actions-x/commit@v2.7
         with:
