@@ -24,6 +24,10 @@
             .timeLeftFatContainer {
                 padding: 2em;
             }
+
+            .comment {
+                color: gray;
+            }
         </style>
     </head>
 
@@ -96,11 +100,15 @@
                 </div>
                 <div class="row">
                     <label class="col-6">
-                        Geschätzte maximale Impfkapazität pro Tag:<br/>
-                        [Ausgehend von <a href="https://kommunal.de/impfzentren-Standorte">ca 460 Impfzentren</a> bei 300 Impfungen am Tag und 45000 Hausärzten mit je 15 Impfungen am Tag einschl. Wochenende;]<br/>
-                        [Die alte Berechnungsgrundlage basierte auf 1000 Impfungen am Tag in den Impfzentren. Da diese aber z.T. bereits von Hausärzten durchgeführt wurden, wurde die Zahl auf 30% reduziert.]
+                        Geschätzte maximale Impfkapazität pro Tag*:
                     </label>
                     <div class="col-6 text-end" id="maxVac"></div>
+                </div>
+                <div class="row">
+                    <div class="col-10 comment">
+                        (*) Ausgehend von <a href="https://kommunal.de/impfzentren-Standorte">ca 460 Impfzentren</a> bei 300 Impfungen am Tag und 45000 Hausärzten mit je 15 Impfungen am Tag einschl. Wochenende.<br/>
+                        Die alte Berechnungsgrundlage basierte auf 1000 Impfungen am Tag in den Impfzentren. Da diese aber z.T. bereits von Hausärzten durchgeführt wurden, wurde die Zahl auf 30% reduziert.
+                    </div>
                 </div>
             </div>
         </div>
@@ -160,7 +168,7 @@
         // settings
         let population = 83020000;
         let goalPercentage = 80.0 * 2.0;
-        let maxVacsPerDay = (460 * 300) + (45000 * 10);
+        let maxVacsPerDay = (460 * 300) + (45000 * 15);
         let secondVacMinDays = 19;
         let secondVacMaxDays = 42;
 
