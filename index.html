@@ -115,8 +115,12 @@
                 </div>
                 <div class="row">
                     <div class="col-10 comment">
-                        (**) Ausgehend von <a href="https://kommunal.de/impfzentren-Standorte">ca 460 Impfzentren</a> bei 300 Impfungen am Tag und 45000 Hausärzten mit je 15 Impfungen am Tag einschl. Wochenende.<br/>
-                        Die alte Berechnungsgrundlage basierte auf 1000 Impfungen am Tag in den Impfzentren. Da diese aber z.T. bereits von Hausärzten durchgeführt wurden, wurde die Zahl auf 30% reduziert.
+                        (**) Die alte Berechnungsgrundlage basierte auf 1000 Impfungen am Tag in den Impfzentren. Da diese aber z.T. bereits von Hausärzten durchgeführt wurden, wurde die Zahl auf 30% reduziert.
+                        Die aktuelle Schätzung basiert auf folgenden Daten: <a href="https://kommunal.de/impfzentren-Standorte">ca 460 Impfzentren</a> bei 300 Impfungen am Tag und 45000 Hausärzten mit je 15 Impfungen am Tag einschl. Wochenende.<br/>
+                        <ul>
+                            <li>ca 460 Impfzentren bei 300 Impfungen am Tag (<a href="https://kommunal.de/impfzentren-Standorte">https://kommunal.de/impfzentren-Standorte</a>)</li>
+                            <li>45000 Hausärzten mit je 20 Impfungen am Tag abzgl. Wochenende (<a href="https://www.arzt-wirtschaft.de/vermischtes/infografik_der_woche/anzahl-der-aerzte-in-deutschland-nach-arztgruppe-bis-2019/?fbclid=IwAR1YHnPYcusPaIIxgcy3g9omITQLcM6Grm4qYkFCzRBSjYc3sTglVTa0Hz0">https://www.arzt-wirtschaft.de/</a> und <a href="https://www.youtube.com/watch?v=r2Gq2NGBN1o">https://www.youtube.com/watch?v=r2Gq2NGBN1o</a>)</li>
+                        </ul>
                     </div>
                 </div>
             </div>
@@ -177,7 +181,7 @@
         // settings
         let population = 83020000;
         let goalPercentage = 70.0 * 2.0;
-        let maxVacsPerDay = (460 * 300) + (45000 * 15);
+        let maxVacsPerDay = (460 * 300) + Math.round((45000 * 20 * 5)/7);
         let secondVacMinDays = 19;
         let secondVacMaxDays = 42;
 
