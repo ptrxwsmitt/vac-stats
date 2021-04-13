@@ -4,7 +4,7 @@
         <title>Hochrechnung COVID-19 Impfrate Deutschland</title>
 
         <meta charset="UTF-8">
-        <meta name="description" content="Hochrechnung COVID-19 Impfrate Deutschland. Zeigt die verbleibende Zeit bis zur 80%igen Durchimpfung Deutschlands.">
+        <meta name="description" content="Hochrechnung COVID-19 Impfrate Deutschland. Zeigt die verbleibende Zeit bis zur 70%igen Durchimpfung Deutschlands.">
         <meta name="keywords" content="Hochrechnung, COVID-19, Impfrate, Deutschland, Impfungen, Wann, durchgeimpft, Ende, Corona, Schätzung, Timer, Ticker, Countdown">
         <meta name="author" content="Patrick Waldschmitt">
 
@@ -37,7 +37,7 @@
 
         <div class="container text-center w-100 timeLeftFatContainer">
             <div class="timeLeftFatContainer">
-                <label>Geschätzte verbleibende Zeit bis zur 80%igen Durchimpfung Deutschlands bei linear steigender Impfrate</label>
+                <label>Geschätzte verbleibende Zeit bis zur 70%igen Durchimpfung Deutschlands bei linear steigender Impfrate</label>
                 <div id="timeLeftFat"></div>
                 <br/>
                 <br/>
@@ -95,7 +95,7 @@
 
             <div class="container p-2">
                 <div class="row">
-                    <label class="col-6">Durchimpfung Deutschlands (geschätzt 80% x 2 Dosen) erreicht bei:</label>
+                    <label class="col-6">Durchimpfung Deutschlands (geschätzt 70% x 2 Dosen) erreicht bei:</label>
                     <div class="col-6 text-end" id="required"></div>
                 </div>
                 <div class="row">
@@ -119,11 +119,11 @@
             <div class="container p-2">
                 <h5>Konstante Impfrate (7-Tage-Wert)</h5>
                 <div class="row">
-                    <label class="col-6">80%igen Durchimpfung Deutschlands erreicht am:</label>
+                    <label class="col-6">70%igen Durchimpfung Deutschlands erreicht am:</label>
                     <div class="col-6" id="goalDate"></div>
                 </div>
                 <div class="row">
-                    <label class="col-6">Verbleibende Zeit bis zur 80%igen Durchimpfung Deutschlands:</label>
+                    <label class="col-6">Verbleibende Zeit bis zur 70%igen Durchimpfung Deutschlands:</label>
                     <div class="col-6" id="timeLeft"></div>
                 </div>
             </div>
@@ -131,11 +131,11 @@
             <div class="container p-2">
                 <h5>Linear ansteigende Impfrate (Mittelwert über alle Daten)</h5>
                 <div class="row">
-                    <label class="col-6">80%igen Durchimpfung Deutschlands erreicht am:</label>
+                    <label class="col-6">70%igen Durchimpfung Deutschlands erreicht am:</label>
                     <div class="col-6" id="goalDateInc"></div>
                 </div>
                 <div class="row">
-                    <label class="col-6">Verbleibende Zeit bis zur 80%igen Durchimpfung Deutschlands:</label>
+                    <label class="col-6">Verbleibende Zeit bis zur 70%igen Durchimpfung Deutschlands:</label>
                     <div class="col-6" id="timeLeftInc"></div>
                 </div>
             </div>
@@ -148,7 +148,14 @@
             <h3>Disclaimer</h3>
             <div class="container p-2">
                 <p>Bei den Hochrechnungen handelt es sich um sehr einfache Modelle, die höchstens eine qualitative Abschätzung ermöglichen.</p>
-                <p>Die Durchimpfung Deutschlands wurde für die Berechnungen auf einen Wert festgesetzt, der bei Impfung von 80% der Bevölkerung erreicht ist. Bei diesem Wert handelt es sich um eine grobe Schätzung. Der Wert fundiert nicht auf recherchierten wissenschaftlichen Erkenntnissen.</p>
+                <p>
+                    Die Durchimpfung Deutschlands wurde für die Berechnungen auf einen Wert festgesetzt, der bei Impfung von 70% der Bevölkerung erreicht ist.<br/>
+                    Bei diesem Wert handelt es sich um eine grobe Schätzung, basierend auf folgender Grundlage:<br/>
+                    <ul>
+                        <li>ca 80% Impfbereitschaft: 67% 'ja' + 13% 'eher ja' (<a href="https://www.aerztezeitung.de/Politik/Deutsche-mit-hoher-Corona-Impfbereitschaft-aber-Wissensluecken-417569.html?fbclid=IwAR09UB7aH4MrrAG_SBGNi3I65TE88Mjlk1AnLA7cfFM8g3FQ3Z-Fr9Fp1oY">https://www.aerztezeitung.de/</a>) <br/></li>
+                        <li>abzgl. ca. 10% Kinder unter 12  (<a href="https://www.bpb.de/nachschlagen/zahlen-und-fakten/soziale-situation-in-deutschland/61538/altersgruppen?fbclid=IwAR2dBRKRmVjr9yKSr7PWH0xVVq78SE87ssxYevhRxGEE4zb7X1zEMZQYXfk">https://www.bpb.de/</a><br/></li>
+                    </ul>
+                </p>
                 <p>Für die Korrektheit der Daten kann ich nicht garantieren und übernehme dafür keine Haftung.</p>
                 <p>Für den Inhalt der verlinkten Seiten übernehme ich keine Haftung.</p>
             </div>
@@ -167,7 +174,7 @@
 
         // settings
         let population = 83020000;
-        let goalPercentage = 80.0 * 2.0;
+        let goalPercentage = 70.0 * 2.0;
         let maxVacsPerDay = (460 * 300) + (45000 * 15);
         let secondVacMinDays = 19;
         let secondVacMaxDays = 42;
