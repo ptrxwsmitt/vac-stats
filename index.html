@@ -334,15 +334,23 @@
             var startingValue = (chartDataRki.length-1) * dailyInc;
             var sum = startingValue;
             var max = (population * goalPercentage/100.0);
+            var estimatedDaysToChart = 100; // truncate chartIncEstimation after the loop
+            var daysToMaxVacsPerDay = 0;
             while(sum < max) {
                 var rate = Math.min(startingValue + (days*dailyInc), maxVacsPerDay);
-                sum += rate;
-                if(days < 100) {
-                    chartIncEstimation.push({x: now.format(rkiDateFormat), y: rate})
+                if((daysToMaxVacsPerDay <= 0) && (rate == maxVacsPerDay)) {
+                    daysToMaxVacsPerDay = days;
                 }
+                sum += rate;
+                chartIncEstimation.push({x: now.format(rkiDateFormat), y: rate})
                 now.add(1, 'd');
                 days++;
             }
+            // increase limit based on daysToMaxVacsPerDay
+            if((daysToMaxVacsPerDay > 0) && (daysToMaxVacsPerDay + 7 > estimatedDaysToChart)) {
+                estimatedDaysToChart = daysToMaxVacsPerDay + 7;
+            }
+            chartIncEstimation = chartIncEstimation.slice(0, estimatedDaysToChart);
             return days;
         }
 
