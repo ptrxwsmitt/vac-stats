@@ -334,12 +334,15 @@
         function daysTillGoalLinear(dailyRate, dailyInc, goalPercentage) {
             var now = getLastMeassuredMoment().add(-1,'d').startOf('day');
             var days = 0;
+
             var startingValue = (chartDataRki.length-1) * dailyInc;
-            var sum = startingValue;
             var max = (population * goalPercentage/100.0);
-            var estimatedDaysToChart = 100; // truncate chartIncEstimation after the loop
+            var sum = sumVaccinations(); // start with vaccinations at current date
+
+            var maxDaysToChart = 60; // truncate chartIncEstimation after the loop
             var daysToMaxVacsPerDay = 0;
-            while(sum < max) {
+            var daysOverMax = 0; // chart extra days after sum reaches max
+            while((sum < max) || (daysOverMax < 7)) {
                 var rate = Math.min(startingValue + (days*dailyInc), maxVacsPerDay);
                 if((daysToMaxVacsPerDay <= 0) && (rate == maxVacsPerDay)) {
                     daysToMaxVacsPerDay = days;
@@ -347,13 +350,17 @@
                 sum += rate;
                 chartIncEstimation.push({x: now.format(rkiDateFormat), y: rate})
                 now.add(1, 'd');
-                days++;
+                if (sum < max) {
+                    days++;
+                } else {
+                    daysOverMax++;
+                }
             }
             // increase limit based on daysToMaxVacsPerDay
-            if((daysToMaxVacsPerDay > 0) && (daysToMaxVacsPerDay + 7 > estimatedDaysToChart)) {
-                estimatedDaysToChart = daysToMaxVacsPerDay + 7;
+            if((daysToMaxVacsPerDay > 0) && (daysToMaxVacsPerDay + 7 > maxDaysToChart)) {
+                maxDaysToChart = daysToMaxVacsPerDay + 7;
             }
-            chartIncEstimation = chartIncEstimation.slice(0, estimatedDaysToChart);
+            chartIncEstimation = chartIncEstimation.slice(0, maxDaysToChart);
             return days;
         }
 
