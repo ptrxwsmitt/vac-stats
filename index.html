@@ -117,7 +117,7 @@
                         (**) Die alte Berechnungsgrundlage basierte auf 1000 Impfungen am Tag in den Impfzentren. Da diese aber z.T. bereits von Hausärzten durchgeführt wurden, wurde die Zahl reduziert.
                         Die aktuelle Schätzung basiert auf folgenden Daten:
                         <ul>
-                            <li>ca 460 Impfzentren bei 800 Impfungen am Tag (<a href="https://kommunal.de/impfzentren-Standorte">https://kommunal.de/impfzentren-Standorte</a>, 7-Tage Durchschnitt von 756 am 30.04. laut <a href="https://impfdashboard.de/">https://impfdashboard.de/</a>)</li>
+                            <li>ca 460 Impfzentren bei 756 Impfungen am Tag (<a href="https://kommunal.de/impfzentren-Standorte">https://kommunal.de/impfzentren-Standorte</a>, 7-Tage Durchschnitt von 756 am 30.04. laut <a href="https://impfdashboard.de/">https://impfdashboard.de/</a>)</li>
                             <li>45000 Hausärzten mit je 20 Impfungen am Tag abzgl. Wochenende (<a href="https://www.arzt-wirtschaft.de/vermischtes/infografik_der_woche/anzahl-der-aerzte-in-deutschland-nach-arztgruppe-bis-2019/?fbclid=IwAR1YHnPYcusPaIIxgcy3g9omITQLcM6Grm4qYkFCzRBSjYc3sTglVTa0Hz0">https://www.arzt-wirtschaft.de/</a> und <a href="https://www.youtube.com/watch?v=r2Gq2NGBN1o">https://www.youtube.com/</a>)</li>
                         </ul>
                     </div>
@@ -180,9 +180,9 @@
         // settings
         let population = 83020000;
         let goalPercentage = 70.0 * 2.0;
-        let maxVacsPerDay = (460 * 800) + Math.round((45000 * 20 * 5)/7);
-        let secondVacMinDays = 19;
-        let secondVacMaxDays = 42;
+        let maxVacsPerDay = (460 * 756) + Math.round((45000 * 20 * 5)/7);
+        let secondVacMinDays = 42;
+        let secondVacMaxDays = 84;
 
         // calculated data
         let chartDataRki = [];
@@ -334,12 +334,15 @@
         function daysTillGoalLinear(dailyRate, dailyInc, goalPercentage) {
             var now = getLastMeassuredMoment().add(-1,'d').startOf('day');
             var days = 0;
+
             var startingValue = (chartDataRki.length-1) * dailyInc;
-            var sum = startingValue;
             var max = (population * goalPercentage/100.0);
-            var estimatedDaysToChart = 100; // truncate chartIncEstimation after the loop
+            var sum = sumVaccinations(); // start with vaccinations at current date
+
+            var maxDaysToChart = 60; // truncate chartIncEstimation after the loop
             var daysToMaxVacsPerDay = 0;
-            while(sum < max) {
+            var daysOverMax = 0; // chart extra days after sum reaches max
+            while((sum < max) || (daysOverMax < 7)) {
                 var rate = Math.min(startingValue + (days*dailyInc), maxVacsPerDay);
                 if((daysToMaxVacsPerDay <= 0) && (rate == maxVacsPerDay)) {
                     daysToMaxVacsPerDay = days;
@@ -347,13 +350,17 @@
                 sum += rate;
                 chartIncEstimation.push({x: now.format(rkiDateFormat), y: rate})
                 now.add(1, 'd');
-                days++;
+                if (sum < max) {
+                    days++;
+                } else {
+                    daysOverMax++;
+                }
             }
             // increase limit based on daysToMaxVacsPerDay
-            if((daysToMaxVacsPerDay > 0) && (daysToMaxVacsPerDay + 7 > estimatedDaysToChart)) {
-                estimatedDaysToChart = daysToMaxVacsPerDay + 7;
+            if((daysToMaxVacsPerDay > 0) && (daysToMaxVacsPerDay + 7 > maxDaysToChart)) {
+                maxDaysToChart = daysToMaxVacsPerDay + 7;
             }
-            chartIncEstimation = chartIncEstimation.slice(0, estimatedDaysToChart);
+            chartIncEstimation = chartIncEstimation.slice(0, maxDaysToChart);
             return days;
         }
 
