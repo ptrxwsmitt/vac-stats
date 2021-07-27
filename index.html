@@ -62,6 +62,20 @@
                     <label class="col-6">Summe der verabreichten Impfungen:</label>
                     <div class="col-6 text-end" style="text-align: right" id="sumVac"></div>
                 </div>
+            </div>
+            <div class="container p-2">
+                <h5>Anteil der Bevölkerung</h5>
+                <div class="row">
+                    <label class="col-6">Anteil der Bevölkerung mit mindestens einer Impfung:</label>
+                    <div class="col-6 text-end" style="text-align: right" id="percentSingleVac"></div>
+                </div>
+                <div class="row">
+                    <label class="col-6">Anteil der Bevölkerung mit zwei oder mehr Impfungen:</label>
+                    <div class="col-6 text-end" style="text-align: right" id="percentFullVac"></div>
+                </div>
+            </div>
+            <div class="container p-2">
+                <h5>Mittelungen</h5>
                 <div class="row">
                     <label class="col-6">Durchschnittliche Impfrate (7-Tage-Wert):</label>
                     <div class="col-6 text-end" id="avgVac"></div>
@@ -179,7 +193,8 @@
 
         // settings
         let population = 83020000;
-        let goalPercentage = 70.0 * 2.0;
+        let vacScale = 2.0; // number of vaccinations required
+        let goalPercentage = 70.0 * vacScale;
         let maxVacsPerDay = (460 * 756) + Math.round((45000 * 20 * 5)/7);
         let secondVacMinDays = 42;
         let secondVacMaxDays = 84;
@@ -373,6 +388,22 @@
             return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
         }
 
+        function sumFullVaccinated() {
+            return (sumVaccinations() - remainingSecondVacs) / vacScale;
+        }
+
+        function sumSingleVaccinated() {
+            return sumFullVaccinated() + remainingSecondVacs;
+        }
+
+        function percentFullVaccinated() {
+            return ( sumFullVaccinated() * 100.0 ) / population;
+        }
+
+        function percentSingleVaccinated() {
+            return ( sumSingleVaccinated() * 100.0 ) / population;
+        }
+
         function updatePage() {
             // title
             document.getElementById('updateDate').textContent = getLastMeassuredMoment().format(outputFormat);
@@ -380,9 +411,13 @@
             // facts
             document.getElementById('population').textContent = formatNumberWithDots(population);
             document.getElementById('sumVac').textContent = formatNumberWithDots(sumVaccinations());
+            document.getElementById('percentFullVac').textContent = percentFullVaccinated().toFixed(2)+"%";
+            document.getElementById('percentSingleVac').textContent = percentSingleVaccinated().toFixed(2)+"%";
             document.getElementById('avgVac').textContent = formatNumberWithDots(Math.floor(avgVaccinationsPerDay(7)));
             document.getElementById('avgVacInc7Days').textContent = formatNumberWithDots(Math.floor(avgAreaIncreasePerDay(7)));
             document.getElementById('avgVacInc').textContent = formatNumberWithDots(Math.floor(avgAreaIncreasePerDay(chartDataRki.length)));
+
+
 
             document.getElementById('secondVacMinDays').textContent = secondVacMinDays;
             document.getElementById('secondVacMaxDays').textContent = secondVacMaxDays;
@@ -434,6 +469,8 @@
                             label: 'Mittlere Steigerungsrate (komplette Zeit)',
                             backgroundColor: 'rgba(157,181,203)',
                             borderColor: 'rgba(6,100,215)',
+                            borderWidth: 2,
+                            pointRadius: 0,
                             fill: false,
                             data: calcLinearChartDataByArea()
                         },
@@ -441,18 +478,24 @@
                             label: 'Zweit-Impfungen pro Tag (Stand RKI)',
                             backgroundColor: 'rgb(123,179,102)',
                             borderColor: 'rgb(64,140,13)',
+                            borderWidth: 2,
+                            pointRadius: 1,
                             data: chartDataRkiSecondVac
                         },
                         {
                             label: 'Impfungen pro Tag (Stand RKI)',
                             backgroundColor: 'rgb(212,231,205)',
                             borderColor: 'rgb(91,183,29)',
+                            borderWidth: 2,
+                            pointRadius: 1,
                             data: chartDataRki
                         },
                         {
                             label: 'Hochrechnung: linear',
                             backgroundColor: 'rgb(233,213,233)',
                             borderColor: 'rgb(176,87,226)',
+                            borderWidth: 2,
+                            pointRadius: 0,
                             fill: true,
                             data: chartIncEstimation
                         }
