@@ -569,8 +569,13 @@
                 sumFullVaccinated = parseInt(lines[lines.length-1].split('\t')[9])
                 // console.log('sumFullVaccinated: '+sumFullVaccinated);
 
-                //TODO: imprecise/too small, J&J in the last 42 days reduces overdue&outstanding vacs
-                overdueSecondVacs = Math.max(0,sumAfterSecondVacTimeframe - sumFullVaccinated);
+                // J&J in the last 84 days shouldn't reduce overdue vacs
+                let totalJohnsonJohnson = parseInt(lines[lines.length-1].split('\t')[26])
+                let minIndexJohnsonJohnson = parseInt(lines[secondVacMinIndex].split('\t')[26])
+                let recentJohnsonJohnson = totalJohnsonJohnson - minIndexJohnsonJohnson
+                // console.log('recentJohnsonJohnson: '+recentJohnsonJohnson);
+                overdueSecondVacs = Math.max(0,sumAfterSecondVacTimeframe - (sumFullVaccinated - recentJohnsonJohnson));
+
                 remainingSecondVacs = sumSingleVaccinated - sumFullVaccinated;
 
                 updatePage();
