@@ -192,7 +192,7 @@
         let outputFormat = 'DD MMM YYYY';
 
         // settings
-        let population = 83020000;
+        let population = 83227481;
         let vacScale = 2.0; // number of vaccinations required
         let goalPercentage = 70.0 * vacScale;
         let maxVacsPerDay = (460 * 756) + Math.round((45000 * 20 * 5)/7);
@@ -405,8 +405,8 @@
             // facts
             document.getElementById('population').textContent = formatNumberWithDots(population);
             document.getElementById('sumVac').textContent = formatNumberWithDots(sumVaccinations());
-            document.getElementById('percentFullVac').textContent = percentFullVaccinated().toFixed(2)+"%";
-            document.getElementById('percentSingleVac').textContent = percentSingleVaccinated().toFixed(2)+"%";
+            document.getElementById('percentFullVac').textContent = percentFullVaccinated().toFixed(1)+"%";
+            document.getElementById('percentSingleVac').textContent = percentSingleVaccinated().toFixed(1)+"%";
             document.getElementById('avgVac').textContent = formatNumberWithDots(Math.floor(avgVaccinationsPerDay(7)));
             document.getElementById('avgVacInc7Days').textContent = formatNumberWithDots(Math.floor(avgAreaIncreasePerDay(7)));
             document.getElementById('avgVacInc').textContent = formatNumberWithDots(Math.floor(avgAreaIncreasePerDay(chartDataRki.length)));
