@@ -93,7 +93,8 @@
             <div class="container p-2">
                 <h5>Zweitimpfung</h5>
                 <div class="row">
-                    <label class="col-6">Ausstehende Zweitimpfungen (<span id="secondVacMinDays"></span> Tage - <span id="secondVacMaxDays"></span> Tage nach Erstimpfung):</label>
+                    <!-- <label class="col-6">Ausstehende Zweitimpfungen (<span id="secondVacMinDays"></span> Tage - <span id="secondVacMaxDays"></span> Tage nach Erstimpfung):</label> -->
+                    <label class="col-6">Ausstehende Zweitimpfungen (bis zu <span id="secondVacMaxDays"></span> Tage nach Erstimpfung):</label>
                     <div class="col-6 text-end" id="remainingSecondVacs"></div>
                 </div>
                 <div class="row">
@@ -192,17 +193,19 @@
         let outputFormat = 'DD MMM YYYY';
 
         // settings
-        let population = 83020000;
+        let population = 83227481;
         let vacScale = 2.0; // number of vaccinations required
         let goalPercentage = 70.0 * vacScale;
         let maxVacsPerDay = (460 * 756) + Math.round((45000 * 20 * 5)/7);
-        let secondVacMinDays = 42;
-        let secondVacMaxDays = 84;
+        let secondVacMinDays = 21;
+        let secondVacMaxDays = 42;
 
         // calculated data
         let chartDataRki = [];
         let chartDataRkiSecondVac = [];
         let chartIncEstimation = [];
+        let sumFullVaccinated = 0
+        let sumSingleVaccinated = 0
 
         let remainingSecondVacs = 0;
         let overdueSecondVacs = 0;
@@ -388,20 +391,12 @@
             return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
         }
 
-        function sumFullVaccinated() {
-            return (sumVaccinations() - remainingSecondVacs) / vacScale;
-        }
-
-        function sumSingleVaccinated() {
-            return sumFullVaccinated() + remainingSecondVacs;
-        }
-
         function percentFullVaccinated() {
-            return ( sumFullVaccinated() * 100.0 ) / population;
+            return ( sumFullVaccinated * 100.0 ) / population;
         }
 
         function percentSingleVaccinated() {
-            return ( sumSingleVaccinated() * 100.0 ) / population;
+            return ( sumSingleVaccinated * 100.0 ) / population;
         }
 
         function updatePage() {
@@ -411,15 +406,15 @@
             // facts
             document.getElementById('population').textContent = formatNumberWithDots(population);
             document.getElementById('sumVac').textContent = formatNumberWithDots(sumVaccinations());
-            document.getElementById('percentFullVac').textContent = percentFullVaccinated().toFixed(2)+"%";
-            document.getElementById('percentSingleVac').textContent = percentSingleVaccinated().toFixed(2)+"%";
+            document.getElementById('percentFullVac').textContent = percentFullVaccinated().toFixed(1)+"%";
+            document.getElementById('percentSingleVac').textContent = percentSingleVaccinated().toFixed(1)+"%";
             document.getElementById('avgVac').textContent = formatNumberWithDots(Math.floor(avgVaccinationsPerDay(7)));
             document.getElementById('avgVacInc7Days').textContent = formatNumberWithDots(Math.floor(avgAreaIncreasePerDay(7)));
             document.getElementById('avgVacInc').textContent = formatNumberWithDots(Math.floor(avgAreaIncreasePerDay(chartDataRki.length)));
 
 
 
-            document.getElementById('secondVacMinDays').textContent = secondVacMinDays;
+            // document.getElementById('secondVacMinDays').textContent = secondVacMinDays;
             document.getElementById('secondVacMaxDays').textContent = secondVacMaxDays;
             document.getElementById('remainingSecondVacs').textContent = formatNumberWithDots(remainingSecondVacs);
             document.getElementById('secondVacMaxDaysOverdue').textContent = secondVacMaxDays;
@@ -543,47 +538,51 @@
                 let sumBeforeSecondVacTimeframe = 0;
                 let sumInSecondVacTimeframe = 0;
                 let sumAfterSecondVacTimeframe = 0;
-                let sumSecondVac = 0;
+
+                //add first day with zero vacs
+                let dayZero = moment(lines[1].split('\t')[0], rkiDateFormat).add(-1,'d').format(rkiDateFormat)
+                chartDataRki.push({x: dayZero, y: 0});
+                chartDataRkiSecondVac.push({x: dayZero, y: 0})
 
                 for(let lineIndex=1; lineIndex< lines.length; lineIndex++) {
                     let line = lines[lineIndex];
                     let dataset = line.split('\t');
-                    if(lineIndex === 1) {
-                        //add first day with zero vacs
-                        let dayZero = moment(dataset[0], rkiDateFormat).add(-1,'d').format(rkiDateFormat)
-                        chartDataRki.push({x: dayZero, y: 0});
-                    }
                     let vacsCurrentDay = parseInt(dataset[2]);
                     chartDataRki.push({x: dataset[0], y: vacsCurrentDay});
 
-                    //second vac personen_voll_kumulativ
-                    let secondVacCurrentDay = parseInt(dataset[9]);
-                    let secondVacDiff = secondVacCurrentDay - secondVacPreviousDay;
-                    if(secondVacCurrentDay !== 0) {
-                        if(secondVacPreviousDay === 0) {
-                            //add first day with zero vacs
-                            let dayZero = moment(dataset[0], rkiDateFormat).add(-1,'d').format(rkiDateFormat)
-                            chartDataRkiSecondVac.push({x: dayZero, y: 0})
-                        }
-                        chartDataRkiSecondVac.push({x: dataset[0], y: secondVacDiff})
-                    }
-                    secondVacPreviousDay = secondVacCurrentDay;
+                    //dosen_zweit_differenz_zum_vortag
+                    let secondVacDiff = parseInt(dataset[4]);
+                    chartDataRkiSecondVac.push({x: dataset[0], y: secondVacDiff})
 
+                    let firstVacDiff = parseInt(dataset[3]);
                     if(lineIndex < secondVacMinIndex) {
                         //DEBUG console.log('after range: '+dataset[0]);
-                        sumAfterSecondVacTimeframe += vacsCurrentDay;
+                        sumAfterSecondVacTimeframe += firstVacDiff;
                     } else if(lineIndex > secondVacMaxIndex) {
                         //DEBUG console.log('before range: '+dataset[0]);
-                        sumBeforeSecondVacTimeframe += vacsCurrentDay;
+                        sumBeforeSecondVacTimeframe += firstVacDiff;
                     } else {
                         //DEBUG console.log('within range: '+dataset[0]);
-                        sumInSecondVacTimeframe += vacsCurrentDay;
+                        sumInSecondVacTimeframe += firstVacDiff;
                     }
-
-                    sumSecondVac += secondVacDiff;
                 }
-                overdueSecondVacs = Math.max(0,sumAfterSecondVacTimeframe - sumSecondVac);
-                remainingSecondVacs = (sumInSecondVacTimeframe) + (sumAfterSecondVacTimeframe - sumSecondVac);
+                // console.log('sumBeforeSecondVacTimeframe: '+sumBeforeSecondVacTimeframe);
+                // console.log('sumInSecondVacTimeframe: '+sumInSecondVacTimeframe);
+                // console.log('sumAfterSecondVacTimeframe: '+sumAfterSecondVacTimeframe);
+                sumSingleVaccinated = parseInt(lines[lines.length-1].split('\t')[8])
+                // console.log('sumSingleVaccinated: '+sumSingleVaccinated);
+                sumFullVaccinated = parseInt(lines[lines.length-1].split('\t')[9])
+                // console.log('sumFullVaccinated: '+sumFullVaccinated);
+
+                // J&J in the last 84 days shouldn't reduce overdue vacs
+                let totalJohnsonJohnson = parseInt(lines[lines.length-1].split('\t')[26])
+                let minIndexJohnsonJohnson = parseInt(lines[secondVacMinIndex].split('\t')[26])
+                let recentJohnsonJohnson = totalJohnsonJohnson - minIndexJohnsonJohnson
+                // console.log('recentJohnsonJohnson: '+recentJohnsonJohnson);
+                overdueSecondVacs = Math.max(0,sumAfterSecondVacTimeframe - (sumFullVaccinated - recentJohnsonJohnson));
+                // console.log('diffOverdue: '+(sumAfterSecondVacTimeframe  - (sumFullVaccinated - recentJohnsonJohnson)));
+
+                remainingSecondVacs = sumSingleVaccinated - sumFullVaccinated;
 
                 updatePage();
             }
