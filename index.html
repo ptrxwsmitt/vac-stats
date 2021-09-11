@@ -98,6 +98,13 @@
                     <div class="col-6 text-end" id="overdueSecondVacs"></div>
                 </div>
             </div>
+            <div class="container p-2">
+                <h5>Drittimpfungen</h5>
+                <div class="row">
+                    <label class="col-6">Gesamte verabreichte Drittimpfungen:</label>
+                    <div class="col-6 text-end" id="thirdVac"></div>
+                </div>
+            </div>
         </div>
 
         <div class="container">
@@ -206,6 +213,8 @@
 
         let remainingSecondVacs = 0;
         let overdueSecondVacs = 0;
+
+        let thirdVacs = 0;
 
         let chart = null;
 
@@ -417,6 +426,7 @@
             // facts
             document.getElementById('population').textContent = formatNumberWithDots(population);
             document.getElementById('sumVac').textContent = formatNumberWithDots(sumVaccinations());
+            document.getElementById('thirdVac').textContent = formatNumberWithDots(thirdVacs);
             document.getElementById('percentFullVac').textContent = percentFullVaccinated().toFixed(1)+"%";
             document.getElementById('percentSingleVac').textContent = percentSingleVaccinated().toFixed(1)+"%";
             document.getElementById('avgVac').textContent = formatNumberWithDots(Math.floor(avgVaccinationsPerDay(7)));
@@ -506,7 +516,7 @@
                         //},
                         {
                             label: 'Hochrechnung: 7-Tage-Mittelwert',
-                            backgroundColor: 'rgb(184,200,153)',
+                            backgroundColor: 'rgb(204,200,253)',
                             borderColor: 'rgb(76,157,199)',
                             borderWidth: 2,
                             pointRadius: 0,
@@ -563,15 +573,16 @@
                 chartDataRki.push({x: dayZero, y: 0});
                 chartDataRkiSecondVac.push({x: dayZero, y: 0})
 
-		//TODO: use dosen_dritt_kumulativ dosen_kumulativ impf_quote_voll
 		let header = lines[0].split('\t');
 		let date_idx = header.indexOf('date');
 		let diff_total_idx = header.indexOf('dosen_differenz_zum_vortag');
 		let diff_first_idx = header.indexOf('dosen_erst_differenz_zum_vortag');
 		let diff_second_idx = header.indexOf('dosen_zweit_differenz_zum_vortag');
+		let diff_third_idx = header.indexOf('dosen_dritt_differenz_zum_vortag');
 		let persons_once_idx = header.indexOf('personen_erst_kumulativ');
 		let persons_full_idx = header.indexOf('personen_voll_kumulativ');
 		let doses_jj_idx = header.indexOf('dosen_johnson_kumulativ');
+		let doses_third_idx = header.indexOf('dosen_dritt_kumulativ');
 
                 for(let lineIndex=1; lineIndex< lines.length; lineIndex++) {
                     let line = lines[lineIndex];
