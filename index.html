@@ -544,39 +544,50 @@
                 chartDataRki.push({x: dayZero, y: 0});
                 chartDataRkiSecondVac.push({x: dayZero, y: 0})
 
+		//TODO: use dosen_dritt_kumulativ dosen_kumulativ impf_quote_voll
+		let header = lines[0].split('\t');
+		let date_idx = header.indexOf('date');
+		let diff_total_idx = header.indexOf('dosen_differenz_zum_vortag');
+		let diff_first_idx = header.indexOf('dosen_erst_differenz_zum_vortag');
+		let diff_second_idx = header.indexOf('dosen_zweit_differenz_zum_vortag');
+		let persons_once_idx = header.indexOf('personen_erst_kumulativ');
+		let persons_full_idx = header.indexOf('personen_voll_kumulativ');
+		let doses_jj_idx = header.indexOf('dosen_johnson_kumulativ');
+
                 for(let lineIndex=1; lineIndex< lines.length; lineIndex++) {
                     let line = lines[lineIndex];
                     let dataset = line.split('\t');
-                    let vacsCurrentDay = parseInt(dataset[2]);
-                    chartDataRki.push({x: dataset[0], y: vacsCurrentDay});
+	            let date = dataset[date_idx];
+                    let vacsCurrentDay = parseInt(dataset[diff_total_idx]);
+                    chartDataRki.push({x: date, y: vacsCurrentDay});
 
                     //dosen_zweit_differenz_zum_vortag
-                    let secondVacDiff = parseInt(dataset[4]);
-                    chartDataRkiSecondVac.push({x: dataset[0], y: secondVacDiff})
+                    let secondVacDiff = parseInt(dataset[diff_second_idx]);
+                    chartDataRkiSecondVac.push({x: date, y: secondVacDiff})
 
-                    let firstVacDiff = parseInt(dataset[3]);
+                    let firstVacDiff = parseInt(dataset[diff_first_idx]);
                     if(lineIndex < secondVacMinIndex) {
-                        //DEBUG console.log('after range: '+dataset[0]);
+                        //DEBUG console.log('after range: '+date);
                         sumAfterSecondVacTimeframe += firstVacDiff;
                     } else if(lineIndex > secondVacMaxIndex) {
-                        //DEBUG console.log('before range: '+dataset[0]);
+                        //DEBUG console.log('before range: '+date);
                         sumBeforeSecondVacTimeframe += firstVacDiff;
                     } else {
-                        //DEBUG console.log('within range: '+dataset[0]);
+                        //DEBUG console.log('within range: '+date);
                         sumInSecondVacTimeframe += firstVacDiff;
                     }
                 }
                 // console.log('sumBeforeSecondVacTimeframe: '+sumBeforeSecondVacTimeframe);
                 // console.log('sumInSecondVacTimeframe: '+sumInSecondVacTimeframe);
                 // console.log('sumAfterSecondVacTimeframe: '+sumAfterSecondVacTimeframe);
-                sumSingleVaccinated = parseInt(lines[lines.length-1].split('\t')[8])
+                sumSingleVaccinated = parseInt(lines[lines.length-1].split('\t')[persons_once_idx])
                 // console.log('sumSingleVaccinated: '+sumSingleVaccinated);
-                sumFullVaccinated = parseInt(lines[lines.length-1].split('\t')[9])
+                sumFullVaccinated = parseInt(lines[lines.length-1].split('\t')[persons_full_idx])
                 // console.log('sumFullVaccinated: '+sumFullVaccinated);
 
                 // J&J in the last 84 days shouldn't reduce overdue vacs
-                let totalJohnsonJohnson = parseInt(lines[lines.length-1].split('\t')[26])
-                let minIndexJohnsonJohnson = parseInt(lines[secondVacMinIndex].split('\t')[26])
+                let totalJohnsonJohnson = parseInt(lines[lines.length-1].split('\t')[doses_jj_idx])
+                let minIndexJohnsonJohnson = parseInt(lines[secondVacMinIndex].split('\t')[doses_jj_idx])
                 let recentJohnsonJohnson = totalJohnsonJohnson - minIndexJohnsonJohnson
                 // console.log('recentJohnsonJohnson: '+recentJohnsonJohnson);
                 overdueSecondVacs = Math.max(0,sumAfterSecondVacTimeframe - (sumFullVaccinated - recentJohnsonJohnson));
