@@ -200,6 +200,7 @@
         let chartDataRki = [];
         let chartDataRkiSecondVac = [];
         let chartIncEstimation = [];
+        let chartConstantEstimation = [];
         let sumFullVaccinated = 0
         let sumSingleVaccinated = 0
 
@@ -332,9 +333,23 @@
         }
 
         // constant rate
-
         function daysTillGoal(dailyRate, goalPercentage) {
-            return remainingVaccinations(goalPercentage) / dailyRate;
+            var days = remainingVaccinations(goalPercentage) / dailyRate;
+
+            var now = getLastMeassuredMoment().add(-1,'d').startOf('day');
+
+            var max = (population * goalPercentage/100.0);
+            var sum = sumVaccinations(); // start with vaccinations at current date
+
+            while(sum < max) {
+                var rate = dailyRate;
+                sum += rate;
+                chartConstantEstimation.push({x: now.format(rkiDateFormat), y: rate})
+                now.add(1, 'd');
+            }
+            var maxDaysToChart = 60; // truncate chartIncEstimation after the loop
+            chartConstantEstimation = chartConstantEstimation.slice(0, maxDaysToChart);
+            return days;
         }
 
         function calcGoalMoment(dailyRate, goalPercentage) {
@@ -480,14 +495,23 @@
                             pointRadius: 1,
                             data: chartDataRki
                         },
+                        //{
+                        //    label: 'Hochrechnung: linear',
+                        //    backgroundColor: 'rgb(233,213,233)',
+                        //    borderColor: 'rgb(176,87,226)',
+                        //    borderWidth: 2,
+                        //    pointRadius: 0,
+                        //    fill: true,
+                        //    data: chartIncEstimation
+                        //},
                         {
-                            label: 'Hochrechnung: linear',
-                            backgroundColor: 'rgb(233,213,233)',
-                            borderColor: 'rgb(176,87,226)',
+                            label: 'Hochrechnung: 7-Tage-Mittelwert',
+                            backgroundColor: 'rgb(233,213,253)',
+                            borderColor: 'rgb(106,107,206)',
                             borderWidth: 2,
                             pointRadius: 0,
                             fill: true,
-                            data: chartIncEstimation
+                            data: chartConstantEstimation
                         }
                     ]
                 },
