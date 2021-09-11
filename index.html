@@ -36,7 +36,7 @@
 
         <div class="container text-center w-100 timeLeftFatContainer">
             <div class="timeLeftFatContainer">
-                <label>Geschätzte verbleibende Zeit bis zur 70%igen Durchimpfung Deutschlands bei linear steigender Impfrate</label>
+                <label>Geschätzte verbleibende Zeit bis zur 70%igen Durchimpfung Deutschlands bei konstant bleibender Impfrate</label>
                 <div id="timeLeftFat"></div>
                 <br/>
                 <br/>
@@ -79,10 +79,6 @@
                 <div class="row">
                     <label class="col-6">Durchschnittliche Impfrate (7-Tage-Wert):</label>
                     <div class="col-6 text-end" id="avgVac"></div>
-                </div>
-                <div class="row">
-                    <label class="col-6">Mittlere Steigerungsrate der Impfungen (7-Tage-Wert):</label>
-                    <div class="col-6 text-end" id="avgVacInc7Days"></div>
                 </div>
                 <div class="row">
                     <label class="col-6">Mittlere Steigerungsrate der Impfungen (Mittelwert über alle Daten):</label>
@@ -409,7 +405,6 @@
             document.getElementById('percentFullVac').textContent = percentFullVaccinated().toFixed(1)+"%";
             document.getElementById('percentSingleVac').textContent = percentSingleVaccinated().toFixed(1)+"%";
             document.getElementById('avgVac').textContent = formatNumberWithDots(Math.floor(avgVaccinationsPerDay(7)));
-            document.getElementById('avgVacInc7Days').textContent = formatNumberWithDots(Math.floor(avgAreaIncreasePerDay(7)));
             document.getElementById('avgVacInc').textContent = formatNumberWithDots(Math.floor(avgAreaIncreasePerDay(chartDataRki.length)));
 
 
@@ -443,7 +438,7 @@
                 document.getElementById('timeLeftInc').textContent = timeLeftInc;
 
 
-                document.getElementById('timeLeftFat').textContent = timeLeftInc;
+                document.getElementById('timeLeftFat').textContent = timeLeft;
             }
 
             tick();
