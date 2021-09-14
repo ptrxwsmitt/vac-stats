@@ -573,7 +573,7 @@
                 chartDataRki.push({x: dayZero, y: 0});
                 chartDataRkiSecondVac.push({x: dayZero, y: 0})
 
-		const columns = lines[0].split('\t');
+                const columns = lines[0].split('\t');
 
                 for(let lineIndex=1; lineIndex< lines.length; lineIndex++) {
                     let line = lines[lineIndex];
@@ -581,7 +581,7 @@
                     let dataset = {};
                     columns.forEach((column, idx) => dataset[column] = row[idx]);
 
-	            let date = dataset['date'];
+                    let date = dataset['date'];
                     let vacsCurrentDay = parseInt(dataset['dosen_differenz_zum_vortag']);
                     chartDataRki.push({x: date, y: vacsCurrentDay});
 
@@ -601,17 +601,22 @@
                         sumInSecondVacTimeframe += firstVacDiff;
                     }
                 }
+
+                let last_row = lines[lines.length-1].split('\t');
+                let dataset = {};
+                columns.forEach((column, idx) => dataset[column] = last_row[idx]);
+
                 // console.log('sumBeforeSecondVacTimeframe: '+sumBeforeSecondVacTimeframe);
                 // console.log('sumInSecondVacTimeframe: '+sumInSecondVacTimeframe);
                 // console.log('sumAfterSecondVacTimeframe: '+sumAfterSecondVacTimeframe);
-                sumSingleVaccinated = parseInt(lines[lines.length-1].split('\t')['personen_erst_kumulativ'])
+                sumSingleVaccinated = parseInt(dataset['personen_erst_kumulativ'])
                 // console.log('sumSingleVaccinated: '+sumSingleVaccinated);
-                sumFullVaccinated = parseInt(lines[lines.length-1].split('\t')['personen_voll_kumulativ'])
+                sumFullVaccinated = parseInt(dataset['personen_voll_kumulativ'])
                 // console.log('sumFullVaccinated: '+sumFullVaccinated);
 
                 // J&J in the last 84 days shouldn't reduce overdue vacs
-                let totalJohnsonJohnson = parseInt(lines[lines.length-1].split('\t')['dosen_johnson_kumulativ'])
-                let minIndexJohnsonJohnson = parseInt(lines[secondVacMinIndex].split('\t')['dosen_johnson_kumulativ'])
+                let totalJohnsonJohnson = parseInt(dataset['dosen_johnson_kumulativ'])
+                let minIndexJohnsonJohnson = parseInt(lines[secondVacMinIndex].split('\t')[columns.indexOf('dosen_johnson_kumulativ')])
                 let recentJohnsonJohnson = totalJohnsonJohnson - minIndexJohnsonJohnson
                 // console.log('recentJohnsonJohnson: '+recentJohnsonJohnson);
                 overdueSecondVacs = Math.max(0,sumAfterSecondVacTimeframe - (sumFullVaccinated - recentJohnsonJohnson));
