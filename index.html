@@ -4,7 +4,7 @@
         <title>Hochrechnung COVID-19 Impfrate Deutschland</title>
 
         <meta charset="UTF-8">
-        <meta name="description" content="Hochrechnung COVID-19 Impfrate Deutschland. Zeigt die verbleibende Zeit bis zur 70%igen Durchimpfung Deutschlands.">
+        <meta name="description" content="Hochrechnung COVID-19 Impfrate Deutschland. Zeigt die verbleibende Zeit bis zur 70%igen dreifachen Impfung Deutschlands.">
         <meta name="keywords" content="Hochrechnung, COVID-19, Impfrate, Deutschland, Impfungen, Wann, durchgeimpft, Ende, Corona, Schätzung, Timer, Ticker, Countdown">
         <meta name="author" content="Patrick Waldschmitt">
 
@@ -36,7 +36,7 @@
 
         <div class="container text-center w-100 timeLeftFatContainer">
             <div class="timeLeftFatContainer">
-                <label>Geschätzte verbleibende Zeit bis zur 70%igen Durchimpfung Deutschlands bei konstant bleibender Impfrate</label>
+                <label>Geschätzte verbleibende Zeit bis zur 70%igen Dreifachimpfung Deutschlands bei konstant bleibender Impfrate</label>
                 <div id="timeLeftFat"></div>
                 <br/>
                 <br/>
@@ -77,10 +77,10 @@
             <div class="container p-2">
                 <h5>Mittelungen</h5>
                 <div class="row">
-                    <label class="col-6">Durchschnittliche Impfrate (7-Tage-Wert):</label>
+                    <label class="col-6">Durchschnittliche tägliche Impfrate (7-Tage-Wert):</label>
                     <div class="col-6 text-end" id="avgVac"></div>
                 </div>
-                <div class="row">
+                <div class="row" style="display:none">
                     <label class="col-6">Mittlere Steigerungsrate der Impfungen (Mittelwert über alle Daten):</label>
                     <div class="col-6 text-end" id="avgVacInc"></div>
                 </div>
@@ -112,7 +112,7 @@
 
             <div class="container p-2">
                 <div class="row">
-                    <label class="col-6">Durchimpfung Deutschlands (geschätzt 70% x 2 Dosen) erreicht bei*:</label>
+                    <label class="col-6">Durchimpfung Deutschlands (geschätzt 70% x 3 Dosen) erreicht bei*:</label>
                     <div class="col-6 text-end" id="required"></div>
                 </div>
                 <div class="row">
@@ -149,11 +149,11 @@
             <div class="container p-2">
                 <h5>Konstante Impfrate (7-Tage-Wert)</h5>
                 <div class="row">
-                    <label class="col-6">70%igen Durchimpfung Deutschlands erreicht am:</label>
+                    <label class="col-6">70%ige Dreifachimpfung Deutschlands erreicht am:</label>
                     <div class="col-6" id="goalDate"></div>
                 </div>
                 <div class="row">
-                    <label class="col-6">Verbleibende Zeit bis zur 70%igen Durchimpfung Deutschlands:</label>
+                    <label class="col-6">Verbleibende Zeit bis zur 70%igen Dreifachimpfung Deutschlands:</label>
                     <div class="col-6" id="timeLeft"></div>
                 </div>
             </div>
@@ -161,11 +161,11 @@
             <div class="container p-2">
                 <h5>Linear ansteigende Impfrate (Mittelwert über alle Daten)</h5>
                 <div class="row">
-                    <label class="col-6">70%igen Durchimpfung Deutschlands erreicht am:</label>
+                    <label class="col-6">70%ige Dreifachimpfung Deutschlands erreicht am:</label>
                     <div class="col-6" id="goalDateInc"></div>
                 </div>
                 <div class="row">
-                    <label class="col-6">Verbleibende Zeit bis zur 70%igen Durchimpfung Deutschlands:</label>
+                    <label class="col-6">Verbleibende Zeit bis zur 70%igen Dreifachimpfung Deutschlands:</label>
                     <div class="col-6" id="timeLeftInc"></div>
                 </div>
             </div>
@@ -197,7 +197,7 @@
 
         // settings
         let population = 83227481;
-        let vacScale = 2.0; // number of vaccinations required
+        let vacScale = 3.0; // number of vaccinations required
         let goalPercentage = 70.0 * vacScale;
         let maxVacsPerDay = (460 * 756) + Math.round((45000 * 20 * 5)/7);
         let secondVacMinDays = 21;
@@ -480,15 +480,15 @@
                 // The data for our dataset
                 data: {
                     datasets: [
-                        {
-                            label: 'Mittlere Steigerungsrate (komplette Zeit)',
-                            backgroundColor: 'rgba(157,181,203)',
-                            borderColor: 'rgba(6,100,215)',
-                            borderWidth: 2,
-                            pointRadius: 0,
-                            fill: false,
-                            data: calcLinearChartDataByArea()
-                        },
+                        //{
+                        //    label: 'Mittlere Steigerungsrate (komplette Zeit)',
+                        //    backgroundColor: 'rgba(157,181,203)',
+                        //    borderColor: 'rgba(6,100,215)',
+                        //    borderWidth: 2,
+                        //    pointRadius: 0,
+                        //    fill: false,
+                        //    data: calcLinearChartDataByArea()
+                        //},
                         {
                             label: 'Zweit-Impfungen pro Tag (Stand RKI)',
                             backgroundColor: 'rgb(123,179,102)',
