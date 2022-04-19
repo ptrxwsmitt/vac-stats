@@ -19,7 +19,7 @@ jobs:
       - run: 'echo "comparing hashes: $(cat currentHash) against $(cat newHash)"'
       - run: 'if [[ "$(cat currentHash)" != "$(cat newHash)" ]] ; then mv -f germany_vaccinations_timeseries_v2.tsv.new germany_vaccinations_timeseries_v2.tsv ; fi'
       - name: push
-        uses: github-actions-x/commit@v2.7
+        uses: github-actions-x/commit@v2.9
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           push-branch: 'master'
